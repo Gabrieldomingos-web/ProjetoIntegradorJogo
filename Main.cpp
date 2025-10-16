@@ -12,6 +12,7 @@ int TelaInicial(int tela) {
     ALLEGRO_DISPLAY* janela = al_create_display(1920, 1080);
     ALLEGRO_BITMAP* fundo_Inicial = al_load_bitmap("Página_Inicial.png");
     ALLEGRO_BITMAP* fundoInstr = al_load_bitmap("Página_Instruções.png");
+    ALLEGRO_BITMAP* fundoCreditos = al_load_bitmap("Página_creditos.png");
     ALLEGRO_EVENT_QUEUE* fila = al_create_event_queue();
     al_register_event_source(fila, al_get_mouse_event_source());
     al_register_event_source(fila, al_get_keyboard_event_source());
@@ -38,15 +39,30 @@ int TelaInicial(int tela) {
                         tela = 1;
                         al_rest(0.3);
                     }
+                    if ((evento.mouse.x >= 1733 && evento.mouse.x <= 1864) && evento.mouse.y >= 893 && evento.mouse.y <= 1017) {
+                        tela = 6;
+
+                    }
                 }
             }
+
         }
         al_clear_to_color(al_map_rgb(0, 0, 0));
         if (tela == 0)
             al_draw_bitmap(fundo_Inicial, 0, 0, 0);
         else if (tela == 1)
             al_draw_bitmap(fundoInstr, 0, 0, 0);
+        else if (tela == 6)
+            al_draw_bitmap(fundoCreditos, 0, 0, 0);
         if (tela == 1) {
+            if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
+                if ((evento.mouse.x >= 837 && evento.mouse.x <= 1060) && evento.mouse.y >= 841 && evento.mouse.y <= 951) {
+                    tela = 0;
+                    al_rest(0.3);
+                }
+            }
+        }
+        if (tela == 6) {
             if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
                 if ((evento.mouse.x >= 837 && evento.mouse.x <= 1060) && evento.mouse.y >= 841 && evento.mouse.y <= 951) {
                     tela = 0;
@@ -65,6 +81,7 @@ int TelaInicial(int tela) {
     }
     else return 1;
 }
+
 int calcular_chao(int x) {
     if (x <= 123) return 630;
     if (x <= 211) return 689;
@@ -126,16 +143,19 @@ int Colisao_Right(int x, int y, int v) {
 
 struct Posicaopersonagem
 {
-    int x = 20, y = 630, v[2] = { 4,0 }, gravidade = 5;
+    int x , y , gravidade;
+    int v[2];
 };
 struct Posicaofundo
 {
-    bool no_chao = true;
-    int width = 0, height = 0, chao = 630, movimento = 0;
+    bool no_chao;
+    int width , height, chao , movimento;
 };
 int Telaestomago(int tela) {
     struct Posicaopersonagem p;
+    p.x = 20; p.y = 630; p.v[0] = 4; p.v[1] = 0; p.gravidade = 5;
     struct Posicaofundo f;
+    f.width = 0;f.height = 0; f.no_chao = true; f.chao = 630; f.movimento = 0;
     bool right = false, left = false, up = false;
     int x_mapa = p.x;
     int sair = 1;
@@ -156,12 +176,11 @@ int Telaestomago(int tela) {
     al_draw_bitmap(fundo, f.width, f.height, 0);
     al_draw_bitmap(personagem, p.x, p.y, 0);
     al_start_timer(timer);
-    while (sair == 1) {
+    while ( tela == 2) {
         ALLEGRO_EVENT evento;
 
         al_wait_for_event(fila_eventos, &evento);
         if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE){
-            sair = 0;
             tela = 1;
          }
         else if (evento.type == ALLEGRO_EVENT_TIMER)
@@ -171,7 +190,9 @@ int Telaestomago(int tela) {
             case ALLEGRO_KEY_LEFT: left = true; break;
             case ALLEGRO_KEY_RIGHT: right = true; break;
             case ALLEGRO_KEY_UP:up = true; break;
-            case ALLEGRO_KEY_ESCAPE: sair = 0; tela = 1; break;
+            case ALLEGRO_KEY_ESCAPE: tela = 1; break;
+            case ALLEGRO_KEY_ENTER:
+                if (x_mapa >= 2350)tela = 3;
             }
         }
         else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
@@ -194,7 +215,6 @@ int Telaestomago(int tela) {
         }
 
         if (right) {
-            printf("%d\n", p.y);
             int colisao = Colisao_Right(x_mapa, p.y, p.v[0]);
             if (colisao != x_mapa) {
                 x_mapa = colisao;
@@ -232,6 +252,94 @@ int Telaestomago(int tela) {
     al_destroy_display(janela);
     return tela;
 }
+int Tela2(int tela) {
+    ALLEGRO_DISPLAY* janela = al_create_display(1920, 1080);
+    ALLEGRO_BITMAP* fundo_Inicial = al_load_bitmap("Fase 2.png");
+    ALLEGRO_EVENT_QUEUE* fila = al_create_event_queue();
+    al_register_event_source(fila, al_get_keyboard_event_source());
+    al_register_event_source(fila, al_get_mouse_event_source());
+    al_draw_bitmap(fundo_Inicial, 0, 0, 0);
+    while (tela==3) {
+        ALLEGRO_EVENT evento;
+        while (al_get_next_event(fila, &evento)) {
+
+            if (evento.type == ALLEGRO_EVENT_KEY_DOWN) {
+                if (evento.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {//se esc for apertado esse if fechará o jogo
+                    tela = 1;
+                }
+            }
+            if (tela == 3) {
+                if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
+                        tela = 4; 
+                }
+            }
+        }
+        al_flip_display();
+    }
+    al_destroy_bitmap(fundo_Inicial);
+    al_destroy_event_queue(fila);
+    al_destroy_display(janela);
+    return tela;
+}
+int Tela3(int tela) {
+    ALLEGRO_DISPLAY* janela = al_create_display(1920, 1080);
+    ALLEGRO_BITMAP* fundo_Inicial = al_load_bitmap("Fase 3.png");
+    ALLEGRO_EVENT_QUEUE* fila = al_create_event_queue();
+    al_register_event_source(fila, al_get_mouse_event_source());
+    al_register_event_source(fila, al_get_keyboard_event_source());
+    al_draw_bitmap(fundo_Inicial, 0, 0, 0);
+    while (tela == 4) {
+        ALLEGRO_EVENT evento;
+        while (al_get_next_event(fila, &evento)) {
+
+            if (evento.type == ALLEGRO_EVENT_KEY_DOWN) {
+                if (evento.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {//se esc for apertado esse if fechará o jogo
+                    tela = 1;
+                }
+            }
+            if (tela == 4) {
+                if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
+                    tela = 5;
+                }
+            }
+        }
+        al_flip_display();
+    }
+    al_destroy_bitmap(fundo_Inicial);
+    al_destroy_event_queue(fila);
+    al_destroy_display(janela);
+    return tela;
+}
+int Tela4(int tela) {
+    ALLEGRO_DISPLAY* janela = al_create_display(1920, 1080);
+    ALLEGRO_BITMAP* fundo_Inicial = al_load_bitmap("Fase 4.png");
+    ALLEGRO_EVENT_QUEUE* fila = al_create_event_queue();
+    al_register_event_source(fila, al_get_mouse_event_source());
+    al_register_event_source(fila, al_get_keyboard_event_source());
+    al_draw_bitmap(fundo_Inicial, 0, 0, 0);
+    while (tela == 5) {
+        ALLEGRO_EVENT evento;
+        while (al_get_next_event(fila, &evento)) {
+
+            if (evento.type == ALLEGRO_EVENT_KEY_DOWN) {
+                if (evento.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {//se esc for apertado esse if fechará o jogo
+                    tela = 1;
+                }
+            }
+            if (tela == 5) {
+                if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
+                    tela = 1;
+                }
+            }
+        }
+        al_flip_display();
+    }
+    al_destroy_bitmap(fundo_Inicial);
+    al_destroy_event_queue(fila);
+    al_destroy_display(janela);
+    return tela;
+}
+
 int main(){
     int tela = 0;
     while (tela != 1) {
@@ -240,6 +348,15 @@ int main(){
         }
         if (tela == 2) {
             tela = Telaestomago(tela);
+        }
+        if(tela == 3) {
+            tela = Tela2(tela);
+        }
+        if (tela == 4) {
+            tela = Tela3(tela);
+        }
+        if (tela == 5) {
+            tela = Tela4(tela);
         }
     }
 }

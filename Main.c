@@ -10,7 +10,7 @@ int TelaInicial(int tela) {
     al_install_keyboard();
 
     ALLEGRO_DISPLAY* janela = al_create_display(1920, 1080);
-    ALLEGRO_BITMAP* fundo_Inicial = al_load_bitmap("Página_Inicial.png");
+    ALLEGRO_BITMAP* fundo_Inicial = al_load_bitmap("Página_InicialNova.png");
     ALLEGRO_BITMAP* fundoInstr = al_load_bitmap("Página_Instruções.png");
     ALLEGRO_BITMAP* fundoCreditos = al_load_bitmap("Página_creditos.png");
     ALLEGRO_EVENT_QUEUE* fila = al_create_event_queue();

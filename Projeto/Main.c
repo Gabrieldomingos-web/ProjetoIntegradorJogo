@@ -116,14 +116,14 @@ int calcular_chao(int x,int tela,int y) {
         if (x <= 542 && y <= 403) return 403;
         if (x >= 486 && x <= 516 && y <= 529 && y >= 400) return 529;
         if (x >= 324 && x <= 568 && y > 523 && y <= 773) return 773;
-        if (x >= 568 && x <= 938 && y <= 242) return 242;
+        if (x >= 568 && x <= 945 && y <= 242) return 242;
         if (x <= 664 && y <= 523) return 523;
         if (x <= 876 && y <= 483) return 483;
         if (x <= 704 && y <= 745 && y >523) return 745;
         if (x <= 766 && y <= 817) return 817;
         if (x <= 822 && y <= 807) return 807;
         if (x <= 848 && y <= 789) return 789;
-        if (x >= 962 && x <= 1002 && y <= 222) return 222;
+        if (x >= 945 && x <= 1002 && y <= 222) return 222;
         if (x <= 1230 && y <=212) return 212;
         if (x <= 1044 && y <= 473) return 473;
         if (x <= 988 && y <= 717) return 717;
@@ -164,7 +164,7 @@ int Colisao_Left(int x, int y, int v,int tela) {
         if (x >= 324  && x <= 704 && y >= 528 && y <= 773 )  novo_x -= v;
         if (x >= 704 && y >= 528 && y <= 817)  novo_x -= v;
         if (x >= 0 && x <= 100 && y >= 368 && y <= 551)  novo_x -= v;
-        if (x >= 100 && x <= 322 y >=368  && y <= 597)  novo_x -= v;
+        if (x >= 100 && x <= 322 && y >=368  && y <= 597)  novo_x -= v;
         return novo_x;
     }
 }

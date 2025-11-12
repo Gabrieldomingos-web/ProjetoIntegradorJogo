@@ -163,8 +163,8 @@ int Colisao_Left(int x, int y, int v,int tela) {
         if (x >= 876  && y <= 473)  novo_x -= v;
         if (x >= 324  && x <= 704 && y >= 528 && y <= 773 )  novo_x -= v;
         if (x >= 704 && y >= 528 && y <= 817)  novo_x -= v;
-        if (x >= 0 && x <= 100 && y <= 551)  novo_x -= v;
-        if (x >= 100 && x <= 322 && y <= 597)  novo_x -= v;
+        if (x >= 0 && x <= 100 && y >= 368 && y <= 551)  novo_x -= v;
+        if (x >= 100 && x <= 322 y >=368  && y <= 597)  novo_x -= v;
         return novo_x;
     }
 }
@@ -189,7 +189,7 @@ int Colisao_Right(int x, int y, int v,int tela) {
         return novo_x;
     }
     if (tela == 3) {
-        if(x>=0 && x <=550 && y<=403) novo_x += v;
+        if(x>=-5 && x <=550 && y<=403) novo_x += v;
         if( x >= 486 && x < 516 && y > 403 && y<= 529) novo_x += v;
         if (x >= 516 && x < 663 && y > 403 && y <= 523) novo_x += v;
         if (x >= 664 && x < 876 && y > 250 && y <= 483) novo_x += v;
@@ -200,8 +200,16 @@ int Colisao_Right(int x, int y, int v,int tela) {
         if (x >= 704 && x < 766 && y > 483 && y <= 817) novo_x += v;
         if (x >= 766 && x < 822 && y > 483 && y <= 807) novo_x += v;
         if (x >= 568 && x < 704 && y > 529 && y <= 745) novo_x += v;
-        if (x >= 324 && x < 568 && y > 529 && y <= 773) novo_x += v;
-        if ( x < 324 && y > 529 && y < 818) novo_x += v;
+        if (x >= 320 && x < 568 && y > 529 && y <= 773) novo_x += v;
+        if (x >= 568 && x < 938 && y <= 242) novo_x += v;
+        if (x >= 938 && x < 1002 && y <= 222) novo_x += v;
+        if (x >= 1002 && x < 1235 && y <= 212) novo_x += v;
+        if (x >= 1250 && x <1320 && y <= 318) novo_x += v;
+        if (x >= 1236 && x <1250 && y <= 328) novo_x += v;
+        if (x >= 1222 && x < 1236 && y <= 340) novo_x += v;
+        if (x >= 1138 && x < 1344 && y > 350 && y <= 569) novo_x += v;
+        if (x >= 1344 && x < 1456 && y <= 557) novo_x += v;
+        if (x >= -5 && x < 340 && y > 366 && y <= 597) novo_x += v;
         return novo_x;
 
     }

@@ -33,7 +33,7 @@ int TelaInicial(int tela) {
                 if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
                     if ((evento.mouse.x >= 645 && evento.mouse.x <= 931) && evento.mouse.y >= 583 && evento.mouse.y <= 701) {
                         sair = true;
-                        tela = 3;
+                        tela = 2;
                     }
                     if ((evento.mouse.x >= 642 && evento.mouse.x <= 961) && evento.mouse.y >= 732 && evento.mouse.y <= 804) {
                         tela = 1;
@@ -76,8 +76,8 @@ int TelaInicial(int tela) {
     al_destroy_bitmap(fundoInstr);
     al_destroy_event_queue(fila);
     al_destroy_display(janela);
-    if (tela == 3) {
-        return 3;
+    if (tela == 2) {
+        return 2;
     }
     else return 1;
 }
@@ -214,7 +214,15 @@ int Colisao_Right(int x, int y, int v,int tela) {
 
     }
 }
-
+bool Dano(int x, int y){
+    if (x >= 300 && x <=332 && y == 774)return true;
+    if (x >= 467 && x <= 508 && y == 739)return true;
+    if (x >= 1327 && x <= 1340 && y == 638)return true;
+    if (x >= 1379 && x <= 1380 && y == 696)return true;
+    if (x >= 1552 && x <= 1636 && y == 774)return true;
+    if (x >= 2090 && x <= 2160 && y == 774)return true;
+    return false;
+}
 
 struct Posicaopersonagem
 {
@@ -231,9 +239,10 @@ int Telaestomago(int tela) {
     p.x = 20; p.y = 630; p.v[0] = 4; p.v[1] = 0; p.gravidade = 5; p.vida = 3;
     struct Posicaofundo f;
     f.width = 0; f.height = 0; f.no_chao = true; f.chao = 630; f.movimento = 0;
-    bool right = false, left = false, up = false;
+    bool right = false, left = false, up = false, dano = false;
     int x_mapa = p.x;
     int sair = 1;
+    int tempo = 0;
     bool desenhar = false;
     int camera = 4;
     al_init();
@@ -273,9 +282,10 @@ int Telaestomago(int tela) {
             case ALLEGRO_KEY_UP:up = true; break;
             case ALLEGRO_KEY_W:up = true; break;
             case ALLEGRO_KEY_ESCAPE: tela = 1; break;
-            case ALLEGRO_KEY_ENTER:
-                if (x_mapa >= 2350 && x_mapa<=600)
+            case ALLEGRO_KEY_ENTER:  printf(" x = %d y = %d", x_mapa,p.y);
+                if (x_mapa >= 376 && x_mapa <= 400) {
                     printf("%d", p.x);
+                }   
                 if (x_mapa >= 2350)tela = 3;
             }
         }
@@ -287,6 +297,14 @@ int Telaestomago(int tela) {
             case ALLEGRO_KEY_W:up = false; break;
             case ALLEGRO_KEY_A: left = false; break;
             case ALLEGRO_KEY_D: right = false; break;
+            }
+        }
+        if (tempo > 0)
+            tempo--;
+        if (Dano(x_mapa, p.y)) {
+            if (tempo == 0) {
+                p.vida -= 1;      
+                tempo = 30;  
             }
         }
         //eixo X
@@ -365,6 +383,7 @@ int Tela2(int tela) {
     bool right = false, left = false, up = false; bool down = false;
     ALLEGRO_DISPLAY* janela = al_create_display(1600, 900);
     ALLEGRO_BITMAP* fundo2 = al_load_bitmap("fase2.png");
+    ALLEGRO_BITMAP* life = al_load_bitmap("life.png");
     ALLEGRO_BITMAP* personagem = al_load_bitmap("personagem.png");
     ALLEGRO_BITMAP* movimentoleft = al_load_bitmap("personagemleft.png");
     ALLEGRO_BITMAP* movimentoright = al_load_bitmap("personagemright.png");
@@ -430,6 +449,9 @@ int Tela2(int tela) {
                 no_chao = true;
             }
            al_draw_scaled_bitmap(fundo2, 0, 0, 872, 606, 0, 0, 1600, 900, 0);
+           for (int i = 0; i < p.vida; i++) {
+               al_draw_bitmap(life, 20 + i * 60, 60, 0);
+           }
            if (left) {
                al_draw_bitmap(movimentoleft, p.x, p.y, 0);
            }

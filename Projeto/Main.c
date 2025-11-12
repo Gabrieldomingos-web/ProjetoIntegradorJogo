@@ -162,9 +162,9 @@ int Colisao_Left(int x, int y, int v,int tela) {
         if (x >= 664 && x <= 876 && y <= 483)  novo_x -= v;
         if (x >= 876  && y <= 473)  novo_x -= v;
         if (x >= 324  && x <= 704 && y >= 528 && y <= 773 )  novo_x -= v;
-        if (x >= 704 && y >= 528 && y <= 817)  novo_x -= v;
+        if (x >= 704 &&  y <= 817)  novo_x -= v;
         if (x >= 0 && x <= 100 && y >= 368 && y <= 551)  novo_x -= v;
-        if (x >= 100 && x <= 322 && y >=368  && y <= 597)  novo_x -= v;
+        if (x >= 100 && x <= 340 && y >=368  && y <= 597)  novo_x -= v;
         return novo_x;
     }
 }
@@ -193,7 +193,7 @@ int Colisao_Right(int x, int y, int v,int tela) {
         if( x >= 486 && x < 516 && y > 403 && y<= 529) novo_x += v;
         if (x >= 516 && x < 663 && y > 403 && y <= 523) novo_x += v;
         if (x >= 664 && x < 876 && y > 250 && y <= 483) novo_x += v;
-        if (x >= 876 && x <= 1044 && y > 250 && y <= 473) novo_x += v;
+        if (x >= 876 && x <= 1138 && y > 250 && y <= 473) novo_x += v;
         if (x >= 988 && x < 1138 && y > 483 && y <= 653) novo_x += v;
         if (x >= 848 && x <= 988 && y > 483 && y <= 717) novo_x += v;
         if (x >= 822 && x < 848 && y > 483 && y <= 789) novo_x += v;
@@ -360,7 +360,8 @@ int Telaestomago(int tela) {
 int Tela2(int tela) {
     int chao = 216; bool no_chao = false;
     struct Posicaopersonagem p;
-    p.x = 0; p.y = chao; p.v[0] = 2; p.v[1] = -2; p.gravidade = 5; p.vida = 3;
+    p.x = 0; p.y = chao; p.v[0] = 2; p.vida = 3;
+    float gravidade = 0;
     bool right = false, left = false, up = false; bool down = false;
     ALLEGRO_DISPLAY* janela = al_create_display(1600, 900);
     ALLEGRO_BITMAP* fundo2 = al_load_bitmap("fase2.png");
@@ -392,7 +393,8 @@ int Tela2(int tela) {
                 case ALLEGRO_KEY_UP:up = true; break;
                 case ALLEGRO_KEY_W:up = true; break;
                 case ALLEGRO_KEY_ESCAPE: tela = 1; break;
-                case ALLEGRO_KEY_ENTER: printf("x = %d y = %d",p.x,p.y );
+                case ALLEGRO_KEY_ENTER: if(p.x == 1456 && p.y == 557)return tela = 4;
+                
                 }
             }
             else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
@@ -416,15 +418,15 @@ int Tela2(int tela) {
                 chao = calcular_chao(p.x, tela, p.y);
             }
             if (up && no_chao) {
-                p.v[1] = -15;
+                gravidade = -12.0;
                 no_chao = false;
             }
-            p.v[1] += 1;
-            p.y += p.v[1];
+           gravidade += 0.5;
+            p.y += gravidade;
 
             if (p.y >= chao) {
                 p.y = chao;
-                p.v[1] = 0;
+                gravidade = 0.0;
                 no_chao = true;
             }
            al_draw_scaled_bitmap(fundo2, 0, 0, 872, 606, 0, 0, 1600, 900, 0);

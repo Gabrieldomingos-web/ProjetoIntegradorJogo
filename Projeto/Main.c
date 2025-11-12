@@ -135,21 +135,28 @@ int calcular_chao(int x,int tela,int y) {
         if (x <= 1456 && y <= 557) return 557;
     }
 }
-int Colisao_Left(int x, int y, int v) {
-    int novo_x = x;
-    if (y < 631 && x > 0 && x <= 124) novo_x -= v;
-    else if (y < 691 && x > 124 && x <= 215) novo_x -= v;
-    else if (y < 746 && x > 215 && x <= 303) novo_x -= v;
-    else if (y < 780 && x > 303 && x <= 469) novo_x -= v;
-    else if (x > 470 && x <= 1007) novo_x -= v;
-    else if (y <= 420 && x > 1007 && x <= 1102) novo_x -= v;
-    else if (y <= 480 && x > 1102 && x <= 1177) novo_x -= v;
-    else if (y <= 535 && x > 1177 && x <= 1254) novo_x -= v;
-    else if (y <= 585 && x > 1254 && x <= 1327) novo_x -= v;
-    else if (y <= 640 && x > 1327 && x <= 1379) novo_x -= v;
-    else if (y <= 700 && x > 1379 && x <= 1454) novo_x -= v;
-    else if (y <= 776 && x > 1454 && x <= 2380) novo_x -= v;
-    return novo_x;
+int Colisao_Left(int x, int y, int v,int tela) {
+    if(tela == 2){
+        int novo_x = x;
+        if (y < 631 && x > 0 && x <= 124) novo_x -= v;
+        else if (y < 691 && x > 124 && x <= 215) novo_x -= v;
+        else if (y < 746 && x > 215 && x <= 303) novo_x -= v;
+        else if (y < 780 && x > 303 && x <= 469) novo_x -= v;
+        else if (x > 470 && x <= 1007) novo_x -= v;
+        else if (y <= 420 && x > 1007 && x <= 1102) novo_x -= v;
+        else if (y <= 480 && x > 1102 && x <= 1177) novo_x -= v;
+        else if (y <= 535 && x > 1177 && x <= 1254) novo_x -= v;
+        else if (y <= 585 && x > 1254 && x <= 1327) novo_x -= v;
+        else if (y <= 640 && x > 1327 && x <= 1379) novo_x -= v;
+        else if (y <= 700 && x > 1379 && x <= 1454) novo_x -= v;
+        else if (y <= 776 && x > 1454 && x <= 2380) novo_x -= v;
+        return novo_x;
+    }
+    if (tela == 3) {
+        if (x >= 100) {
+            return 1;
+        }
+    }
 }
 
 int Colisao_Right(int x, int y, int v) {
@@ -246,7 +253,7 @@ int Telaestomago(int tela) {
         }
         //eixo X
         if (left) {
-            int colisao = Colisao_Left(x_mapa, p.y, p.v[0]);
+            int colisao = Colisao_Left(x_mapa, p.y, p.v[0],tela);
             if (colisao != x_mapa) {
                 x_mapa = colisao;
                 if (x_mapa >= 960 && x_mapa <= 1700)
@@ -361,9 +368,11 @@ int Tela2(int tela) {
                 case ALLEGRO_KEY_D: right = false; break;
                 }
             }
-            if (left)  p.x -= p.v[0];
+            if (left) {
+                    p.x -= p.v[0];
+            }
             if (right) p.x += p.v[0];
-            chao = calcular_chao(p.x,tela,p.y);
+             chao = calcular_chao(p.x,tela,p.y);
           
             if (up && no_chao) {
                 p.v[1] = -15;

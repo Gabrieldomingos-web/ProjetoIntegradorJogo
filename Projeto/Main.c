@@ -128,16 +128,16 @@ int calcular_chao(int x,int tela,int y) {
         if (x <= 1044 && y <= 473) return 473;
         if (x <= 988 && y <= 717) return 717;
         if (x <= 1138 && y <= 653) return 653;
-        if (x <= 1222 && y <= 340) return 340;
-        if (x <= 1236 && y <= 328) return 328;
+        if (x >= 1222 && x <= 1236 && y <= 340) return 340;
+        if (x >= 1236 && x <= 1250 && y <= 328) return 328;
         if (x >= 1250 && x <= 1320 && y <= 318)return 318;
         if (x <= 1344 && y <= 569) return 569;
         if (x <= 1456 && y <= 557) return 557;
     }
 }
 int Colisao_Left(int x, int y, int v,int tela) {
+    int novo_x = x;
     if(tela == 2){
-        int novo_x = x;
         if (y < 631 && x > 0 && x <= 124) novo_x -= v;
         else if (y < 691 && x > 124 && x <= 215) novo_x -= v;
         else if (y < 746 && x > 215 && x <= 303) novo_x -= v;
@@ -153,28 +153,58 @@ int Colisao_Left(int x, int y, int v,int tela) {
         return novo_x;
     }
     if (tela == 3) {
-        if (x >= 100) {
-            return 1;
-        }
+        if (x >= 0 && x<= 133 && y <= 216)  novo_x -= v;
+        if (x >= 492 && y <= 403)  novo_x -= v;
+        if (x >= 344 && x <= 492 && y <= 398)  novo_x -= v;
+        if (x >= 134 && x <= 343 && y <= 366)  novo_x -= v;
+        if (x >= 486 && x <=516 && y <= 529)  novo_x -= v;
+        if (x >= 516 && x <= 664 && y <= 523)  novo_x -= v;
+        if (x >= 664 && x <= 876 && y <= 483)  novo_x -= v;
+        if (x >= 876  && y <= 473)  novo_x -= v;
+        if (x >= 324  && x <= 704 && y >= 528 && y <= 773 )  novo_x -= v;
+        if (x >= 704 && y >= 528 && y <= 817)  novo_x -= v;
+        if (x >= 0 && x <= 100 && y <= 551)  novo_x -= v;
+        if (x >= 100 && x <= 322 && y <= 597)  novo_x -= v;
+        return novo_x;
     }
 }
 
-int Colisao_Right(int x, int y, int v) {
+int Colisao_Right(int x, int y, int v,int tela) {
     int novo_x = x;
-    if (x < 469) novo_x += v;
-    else if (y < 742 && x > 469 && x <= 567) novo_x += v;
-    else if (y < 710 && x > 567 && x <= 603) novo_x += v;
-    else if (y < 670 && x > 603 && x <= 675) novo_x += v;
-    else if (y < 630 && x > 675 && x <= 734) novo_x += v;
-    else if (y < 579 && x > 734 && x <= 805) novo_x += v;
-    else if (y < 523 && x > 805 && x <= 937) novo_x += v;
-    else if (y <= 480 && x > 937 && x <= 1007) novo_x += v;
-    else if (y <= 421 && x > 1007 && x <= 1102) novo_x += v;
-    else if (y <= 774 && x > 1102 && x <= 2204) novo_x += v;
-    else if (y <= 737 && x > 2204 && x <= 2238) novo_x += v;
-    else if (y <= 700 && x > 2238 && x < 2285) novo_x += v;
-    else if (y <= 654 && x > 2285 && x < 2380) novo_x += v;
-    return novo_x;
+    if (tela == 2)
+    {
+        if (x < 469) novo_x += v;
+        else if (y < 742 && x > 469 && x <= 567) novo_x += v;
+        else if (y < 710 && x > 567 && x <= 603) novo_x += v;
+        else if (y < 670 && x > 603 && x <= 675) novo_x += v;
+        else if (y < 630 && x > 675 && x <= 734) novo_x += v;
+        else if (y < 579 && x > 734 && x <= 805) novo_x += v;
+        else if (y < 523 && x > 805 && x <= 937) novo_x += v;
+        else if (y <= 480 && x > 937 && x <= 1007) novo_x += v;
+        else if (y <= 421 && x > 1007 && x <= 1102) novo_x += v;
+        else if (y <= 774 && x > 1102 && x <= 2204) novo_x += v;
+        else if (y <= 737 && x > 2204 && x <= 2238) novo_x += v;
+        else if (y <= 700 && x > 2238 && x < 2285) novo_x += v;
+        else if (y <= 654 && x > 2285 && x < 2380) novo_x += v;
+        return novo_x;
+    }
+    if (tela == 3) {
+        if(x>=0 && x <=550 && y<=403) novo_x += v;
+        if( x >= 486 && x < 516 && y > 403 && y<= 529) novo_x += v;
+        if (x >= 516 && x < 663 && y > 403 && y <= 523) novo_x += v;
+        if (x >= 664 && x < 876 && y > 250 && y <= 483) novo_x += v;
+        if (x >= 876 && x <= 1044 && y > 250 && y <= 473) novo_x += v;
+        if (x >= 988 && x < 1138 && y > 483 && y <= 653) novo_x += v;
+        if (x >= 848 && x <= 988 && y > 483 && y <= 717) novo_x += v;
+        if (x >= 822 && x < 848 && y > 483 && y <= 789) novo_x += v;
+        if (x >= 704 && x < 766 && y > 483 && y <= 817) novo_x += v;
+        if (x >= 766 && x < 822 && y > 483 && y <= 807) novo_x += v;
+        if (x >= 568 && x < 704 && y > 529 && y <= 745) novo_x += v;
+        if (x >= 324 && x < 568 && y > 529 && y <= 773) novo_x += v;
+        if ( x < 324 && y > 529 && y < 818) novo_x += v;
+        return novo_x;
+
+    }
 }
 
 
@@ -264,7 +294,7 @@ int Telaestomago(int tela) {
         }
 
         if (right) {
-            int colisao = Colisao_Right(x_mapa, p.y, p.v[0]);
+            int colisao = Colisao_Right(x_mapa, p.y, p.v[0],tela);
             if (colisao != x_mapa) {
                 x_mapa = colisao;
                 if (x_mapa >= 960 && x_mapa <= 1770)
@@ -369,11 +399,14 @@ int Tela2(int tela) {
                 }
             }
             if (left) {
-                    p.x -= p.v[0];
+
+                p.x = Colisao_Left(p.x, p.y, p.v[0],tela);
+                chao = calcular_chao(p.x, tela, p.y);
             }
-            if (right) p.x += p.v[0];
-             chao = calcular_chao(p.x,tela,p.y);
-          
+            if (right) {
+                p.x = Colisao_Right(p.x, p.y, p.v[0], tela);
+                chao = calcular_chao(p.x, tela, p.y);
+            }
             if (up && no_chao) {
                 p.v[1] = -15;
                 no_chao = false;

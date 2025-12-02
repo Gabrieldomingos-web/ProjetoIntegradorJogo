@@ -2,6 +2,8 @@
 #include<allegro5/allegro_image.h>
 #include<stdio.h>
 #include<allegro5/allegro_primitives.h>
+#include <stdlib.h>
+#include <time.h>
 struct Posicaopersonagem
 {
     int x, y, gravidade, vida;
@@ -14,6 +16,11 @@ struct Posicaofundo
 };
 struct tiro {
     int x[3], y[3];
+};
+struct Vilao4 {
+    int x[10], y[10];
+    bool vida[10], ativo[10], no_chao[10];
+    float gravidade[10];
 };
 int TelaInicial(int tela) {
     bool sair = false;
@@ -46,7 +53,7 @@ int TelaInicial(int tela) {
                 if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
                     if ((evento.mouse.x >= 645 && evento.mouse.x <= 931) && evento.mouse.y >= 583 && evento.mouse.y <= 701) {
                         sair = true;
-                        tela = 2;
+                        tela = 5;
                     }
                     if ((evento.mouse.x >= 642 && evento.mouse.x <= 961) && evento.mouse.y >= 732 && evento.mouse.y <= 804) {
                         tela = 1;
@@ -89,8 +96,8 @@ int TelaInicial(int tela) {
     al_destroy_bitmap(fundoInstr);
     al_destroy_event_queue(fila);
     al_destroy_display(janela);
-    if (tela == 2) {
-        return 2;
+    if (tela == 5) {
+        return 5;
     }
     else return 1;
 }
@@ -147,6 +154,17 @@ int calcular_chao(int x, int tela, int y) {
         if (x <= 1344 && y <= 569) return 569;
         if (x <= 1456 && y <= 557) return 557;
     }
+    if (tela == 5) {
+        if (x >= 82 && x <= 818 && y > 0 && y <= 327) return 327;
+        if (x >= 506 && x <= 654 && y > 327 && y <= 418) return 418;
+        if (x >= 794 && x <= 910 && y <= 457) return 457;
+        if (x >= 178 && x <= 410 && y > 327 && y <= 551) return 551;
+        if (x >= 590 && x <= 794 && y > 327 && y <= 575) return 575;
+        if (x >= 410 && x <= 622 && y <= 689) return 689;
+        if (x >= 670 && x <= 1494 && y<= 759) return 759;
+        if (x >= 82 && x <= 410 && y > 327 && y <= 759) return 759;
+        if (x >= 410 && x <= 670 && y <= 788) return 788; 
+    }
 }
 int Colisao_Left(int x, int y, int v, int tela) {
     int novo_x = x;
@@ -181,6 +199,12 @@ int Colisao_Left(int x, int y, int v, int tela) {
         if (x >= 704 && y <= 817)  novo_x -= v;
         if (x >= 0 && x <= 100 && y >= 368 && y <= 551)  novo_x -= v;
         if (x >= 100 && x <= 340 && y >= 368 && y <= 597)  novo_x -= v;
+        return novo_x;
+    }
+    if (tela == 5) {
+        if (x >= 93 && x < 413 && y <= 759)  novo_x -= v;
+        if (x >= 413 && x < 670 && y <= 788)  novo_x -= v;
+        if (x >= 670 && x <= 1492 && y <= 759) novo_x -= v;
         return novo_x;
     }
 }
@@ -231,6 +255,12 @@ int Colisao_Right(int x, int y, int v, int tela) {
         return novo_x;
 
     }
+    if (tela == 5) {
+        if (x >= 82 && x < 410 && y <= 759) novo_x += v;
+        if (x >= 410 && x < 657 && y <= 788) novo_x += v;
+        if (x >= 657 && x <= 1491 && y <= 759) novo_x += v;
+        return novo_x;
+    }
 }
 bool Dano(int x, int y) {
     if (x >= 300 && x <= 332 && y == 774)return true;
@@ -248,12 +278,13 @@ int Telaestomago(int tela) {
     f.width = 0; f.height = 0; f.no_chao = true; f.chao = 630; f.movimento = 0;
     struct tiro t;
    
-    bool right = false, left = false, up = false, dano = false;
+    bool right = false, left = false, up = false, dano = false, space = false;
     int x_mapa = p.x;
     int sair = 1;
     int tempo = 0;
     bool desenhar = false, z = false;
-    int camera = 4;
+    int camera = 4, xhabilidade=p.x, yhabilidade = p.y-5;
+
     al_init();
     al_init_image_addon();
     al_install_keyboard();
@@ -264,6 +295,7 @@ int Telaestomago(int tela) {
     ALLEGRO_BITMAP* life = al_load_bitmap("life.png");
     ALLEGRO_BITMAP* socoleft = al_load_bitmap("socoleft.png");
     ALLEGRO_BITMAP* socoright = al_load_bitmap("socoright.png");
+    ALLEGRO_BITMAP* HABILIDADE = al_load_bitmap("Seringa.png");
     ALLEGRO_BITMAP* personagem = al_load_bitmap("personagem.png");
     ALLEGRO_BITMAP* TIRO = al_load_bitmap("tirovilao1.png");
     ALLEGRO_BITMAP* NPC = al_load_bitmap("NPCtela1.png");
@@ -296,6 +328,7 @@ int Telaestomago(int tela) {
                 case ALLEGRO_KEY_W:up = true; break;
                 case ALLEGRO_KEY_Z:z = true; break;
                 case ALLEGRO_KEY_ESCAPE: tela = 1; break;
+                case ALLEGRO_KEY_SPACE: space = true; break;
                 case ALLEGRO_KEY_ENTER:
                     printf("%d", x_mapa);
                     if (x_mapa >= 376 && x_mapa <= 400) {
@@ -353,7 +386,22 @@ int Telaestomago(int tela) {
                     }
                 }
 
+               /* if (space) {
 
+                    if (xhabilidade < p.x + 300 && xhabilidade > p.x - 300) {
+                        if (1928 > x_mapa) {
+                            xhabilidade += 3;
+                        }
+                        if (1928 < x_mapa) {
+                            xhabilidade -= 3;
+                        }
+                        yhabilidade = p.y - 5
+
+                    }else{
+                        xhabilidade = p.x
+                    }
+                        
+                }*/
 
                 // eixo Y
                 f.chao = calcular_chao(x_mapa, tela, p.y);
@@ -381,54 +429,61 @@ int Telaestomago(int tela) {
                     if (z) {
                         al_draw_bitmap(socoleft, p.x, p.y, 0);
                     }
-                    al_draw_bitmap(movimentoleft, p.x, p.y, 0);
+                    else {
+                       al_draw_bitmap(movimentoleft, p.x, p.y, 0);
+                    }
                 }
                 else {
                     if (right) {
                         if (z) {
                             al_draw_bitmap(socoright, p.x, p.y, 0);
                         }
-                        al_draw_bitmap(movimentoright, p.x, p.y, 0);
+                        else {
+                            al_draw_bitmap(movimentoright, p.x, p.y, 0);
+                        } 
                     }
                     else {
                         al_draw_bitmap(personagem, p.x, p.y, 0);
                     }
-
+                    if (z) {
+                        al_draw_bitmap(socoright, p.x, p.y, 0);
+                    }
                 }
                 al_draw_scaled_bitmap(vilao, 0, 0, 32, 32, 1928 + f.width, 750, 60, 60, 0);
-                ;
-
-                if (x_mapa >= 1460 && t.x[0] >= 1460 + f.width ) {
+                ;if(space){
+                al_draw_scaled_bitmap(HABILIDADE, 0, 0, 612, 408, xhabilidade, yhabilidade, 15, 15, 0);
+                }
+                if (x_mapa >= 1460 && t.x[0] >= 1460 + f.width && x_mapa <= 2204 && t.x[0] <= 2204 + f.width) {
                     t.y[0] = f.chao - 5;
                     if (right) {
-                        if (f.width + 1928 > x_mapa) {
+                        if ( 1928 < x_mapa) {
                             t.x[0] -= p.v[0];
                             t.x[0] += 4;
                         }
-                        if (f.width + 1928 < x_mapa) {
+                        if ( 1928 > x_mapa) {
                             t.x[0] -= p.v[0];
                             t.x[0] -= 2;
                         }
                     }
                     if(left) {
-                        if (f.width + 1928 > x_mapa) {
+                        if ( 1928 < x_mapa) {
                             t.x[0] += 4;
                         }
-                        if (f.width + 1928 < x_mapa) {
+                        if ( 1928 > x_mapa) {
                             t.x[0] -= 4;
                         }
                     }
                     else {
-                        if (f.width + 1928 > x_mapa) {
-                            t.x[0] += 4;
+                        if ( 1928 < x_mapa) {
+                            t.x[0] += 6;
                         }
-                        if (f.width + 1928 < x_mapa) {
-                            t.x[0] -= 4;
+                        if ( 1928 > x_mapa) {
+                            t.x[0] -= 6;
                         }
                     }
        
                     al_draw_scaled_bitmap(TIRO, 0, 0, 32, 32, t.x[0], t.y[0], 40, 15, 0);
-                    if (t.x[0] - 15 <= p.x  && t.x[0] +15 >= p.x && p.y >=t.y[0]) {
+                    if (t.x[0] - 20 <= p.x  && t.x[0] +20 >= p.x && p.y >=t.y[0]) {
                     p.vida--;
                     t.x[0] = 1928 + f.width;
                     printf("%d ", t.x[0]);
@@ -634,6 +689,7 @@ int Tela3(int tela) {
     ALLEGRO_BITMAP* fundo_Inicial = al_load_bitmap("Fase 3.png");
     ALLEGRO_BITMAP* life = al_load_bitmap("life.png");
     ALLEGRO_BITMAP* personagem = al_load_bitmap("personagem.png");
+    ALLEGRO_BITMAP* vilao = al_load_bitmap("vilao3.png");
     ALLEGRO_BITMAP* movimentoleft = al_load_bitmap("personagemleft.png");
     ALLEGRO_BITMAP* movimentoright = al_load_bitmap("personagemright.png");
     ALLEGRO_EVENT_QUEUE* fila = al_create_event_queue();
@@ -720,26 +776,178 @@ int Tela3(int tela) {
 }
 int Tela4(int tela) {
     struct Posicaopersonagem  p;
-    ALLEGRO_DISPLAY* janela = al_create_display(1920, 1080);
-    ALLEGRO_BITMAP* fundo_Inicial = al_load_bitmap("Fase 4.png");
+    p.x = 100; p.y = 746; p.v[0] = 4; p.vida = 3;
+    struct Vilao4 vilao;
+    bool right = false, left = false, up = false, Z = false, down = false; bool  no_chao = true;
+    int quantvilao = 10;
+    int vilaoAtual = -1;
+    int chaovilao[10];
+    int tempoSpawn = 0;
+    int delaySpawn = 180; 
+    for (int i = 0; i < quantvilao;i++) {
+        vilao.x[i] = rand() % 2+1;
+    }
+    for (int i = 0; i < quantvilao; i++) {
+        if (vilao.x[i] == 1) {
+            vilao.x[i] = 288;
+            vilao.y[i] =327;
+            chaovilao[i] = 0;
+        }
+        else {
+            vilao.x[i] = 1400;
+            vilao.y[i] = 759;
+        }
+        vilao.vida[i] = true;
+        vilao.ativo[i] = false;
+        vilao.gravidade[i] = 0.0;
+        vilao.no_chao[i] = true;
+    }
+    int chao ;
+    float gravidade = 0.0;
+    ALLEGRO_DISPLAY* janela = al_create_display(1600, 900);
+    ALLEGRO_BITMAP* fundo_Inicial = al_load_bitmap("Fase4.png");
+    ALLEGRO_BITMAP* life = al_load_bitmap("life.png");
+    ALLEGRO_BITMAP* personagem = al_load_bitmap("personagem.png");
+    ALLEGRO_BITMAP* movimentoleft = al_load_bitmap("personagemleft.png");
+    ALLEGRO_BITMAP* movimentoright = al_load_bitmap("personagemright.png");
+    ALLEGRO_BITMAP* imageVilao = al_load_bitmap("vilao3.png");
     ALLEGRO_EVENT_QUEUE* fila = al_create_event_queue();
+    ALLEGRO_TIMER* timer = al_create_timer(1.0 / 60);
     al_register_event_source(fila, al_get_mouse_event_source());
     al_register_event_source(fila, al_get_keyboard_event_source());
-    al_draw_bitmap(fundo_Inicial, 0, 0, 0);
+    al_register_event_source(fila, al_get_timer_event_source(timer));
+    al_draw_scaled_bitmap(fundo_Inicial, 0, 0, 1536, 1024, 0, 0, 1600, 900, 0);
+    al_start_timer(timer);
     while (tela == 5) {
         ALLEGRO_EVENT evento;
-        while (al_get_next_event(fila, &evento)) {
+        al_wait_for_event(fila, &evento);
+        if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
+            tela = 1;
+        }
+        if (evento.type == ALLEGRO_EVENT_KEY_DOWN) {
+            switch (evento.keyboard.keycode) {
+            case ALLEGRO_KEY_LEFT: left = true; break;
+            case ALLEGRO_KEY_RIGHT: right = true; break;
+            case ALLEGRO_KEY_A: left = true; break;
+            case ALLEGRO_KEY_D: right = true; break;
+            case ALLEGRO_KEY_UP:up = true; break;
+            case ALLEGRO_KEY_W:up = true; break;
+            case ALLEGRO_KEY_Z:;  Z = true; break;
+            case ALLEGRO_KEY_DOWN: down = true; break;
+            case ALLEGRO_KEY_ESCAPE: tela = 1; break;
+            case ALLEGRO_KEY_ENTER: printf("%d  %d",vilao.y[0],p.y);
+            }
+        }
+        else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
+            switch (evento.keyboard.keycode) {
+            case ALLEGRO_KEY_LEFT: left = false; break;
+            case ALLEGRO_KEY_RIGHT: right = false; break;
+            case ALLEGRO_KEY_UP:up = false; break;
+            case ALLEGRO_KEY_W:up = false; break;
+            case ALLEGRO_KEY_Z:Z = false; break;
+            case ALLEGRO_KEY_DOWN:down = false; break;
+            case ALLEGRO_KEY_A: left = false; break;
+            case ALLEGRO_KEY_D: right = false; break;
+            }
+        }
+        if (left) {
+            p.x = Colisao_Left(p.x, p.y, p.v[0], tela);
+        }
 
-            if (evento.type == ALLEGRO_EVENT_KEY_DOWN) {
-                if (evento.keyboard.keycode == ALLEGRO_KEY_ESCAPE) {//se esc for apertado esse if fechará o jogo
-                    tela = 1;
+        if (right) {
+            p.x = Colisao_Right(p.x, p.y, p.v[0], tela);
+        }
+        chao = calcular_chao(p.x, tela, p.y);
+        if (up && no_chao) {
+            gravidade = -12.0;
+            no_chao = false;
+        }
+        gravidade += 0.5;
+        p.y += gravidade;
+
+        if (p.y >= chao) {
+            p.y = chao;
+            gravidade = 0.0;
+            no_chao = true;
+        }
+        for (int i = 0; i < quantvilao; i++) {
+            vilao.ativo[0] = true;
+            if (vilao.x[i] < p.x) {
+                vilao.x[i] = Colisao_Right(vilao.x[i], vilao.y[i], 2, tela);
+            }
+            if (vilao.x[i] > p.x) {
+                vilao.x[i] = Colisao_Left(vilao.x[i], vilao.y[i], 2, tela);
+            }
+            if (p.x <= vilao.x[i] + 50 && p.x >= vilao.x[i] - 50) {
+               
+                if (vilao.no_chao[i] == true) {
+                    
+                    if (p.y < vilao.y[i]) {
+                        
+                        vilao.gravidade[i] = -11.0; 
+                        vilao.no_chao[i] = false;
+                        vilao.y[i] += vilao.gravidade[i];
+                    }
                 }
             }
-            if (tela == 5) {
-                if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
-                    tela = 2;
+                chaovilao[i] = calcular_chao(vilao.x[i], tela, vilao.y[i]);
+
+             if (vilao.y[i] < chaovilao[i]) {
+                 if (vilao.y[i] + vilao.gravidade[i] <= chaovilao[i]) {
+                     vilao.y[i] += vilao.gravidade[i];
+                 }
+                 if (vilao.gravidade[i] < 10)
+                 {
+                     vilao.gravidade[i] += 0.5;
+                 }
+                 else if(vilao.y[i]>= chaovilao[i]-10) {
+                     vilao.y[i]++;
+                 }
+                
+             }
+             if (vilao.y[i] == chaovilao[i]) {
+                 vilao.gravidade[i] = 0.0;
+                 vilao.no_chao[i] = true;
+             }
+   
+        }
+        tempoSpawn++;
+        printf("%d",tempoSpawn);
+        if (vilaoAtual == -1 && tempoSpawn >= delaySpawn) {
+            for (int i = 0; i < quantvilao; i++) {
+                if (!vilao.ativo[i] && vilao.vida[i]) {
+                    vilao.ativo[i] = true;
+                    vilaoAtual = i;   
+                    tempoSpawn = 0;
+                    break;
                 }
             }
+        }
+        if (vilaoAtual != -1) {
+            if (!vilao.vida[vilaoAtual] || vilao.y[vilaoAtual] > 900) {
+                vilao.ativo[vilaoAtual] = false;
+                vilaoAtual = -1;
+            }
+        }
+        al_draw_scaled_bitmap(fundo_Inicial, 0, 0, 1536, 1024, 0, 0, 1600, 900, 0);
+        for (int i = 0; i < p.vida; i++) {
+            al_draw_bitmap(life, 20 + i * 60, 60, 0);
+        }
+        if (left) {
+            al_draw_scaled_bitmap(movimentoleft, 0, 0, 30, 27, p.x, p.y, 40, 40, 0);
+        }
+        else {
+            if (right) {
+                al_draw_scaled_bitmap(movimentoright, 0, 0, 30, 34, p.x, p.y, 40, 40, 0);
+            }
+            else {
+                al_draw_scaled_bitmap(personagem, 0, 0, 32, 32, p.x, p.y, 40, 40, 0);
+            }
+
+        }
+        
+        if (vilaoAtual != -1) {
+            al_draw_scaled_bitmap(imageVilao, 0, 0, 64, 64,vilao.x[vilaoAtual] - 20, vilao.y[vilaoAtual] - 30,100, 100, 0);
         }
         al_flip_display();
     }
@@ -750,6 +958,7 @@ int Tela4(int tela) {
 }
 
 int main() {
+    srand(time(NULL));
     int tela = 0;
     while (tela != 1) {
         if (tela == 0) {

@@ -386,22 +386,7 @@ int Telaestomago(int tela) {
                     }
                 }
 
-               /* if (space) {
-
-                    if (xhabilidade < p.x + 300 && xhabilidade > p.x - 300) {
-                        if (1928 > x_mapa) {
-                            xhabilidade += 3;
-                        }
-                        if (1928 < x_mapa) {
-                            xhabilidade -= 3;
-                        }
-                        yhabilidade = p.y - 5
-
-                    }else{
-                        xhabilidade = p.x
-                    }
-                        
-                }*/
+              
 
                 // eixo Y
                 f.chao = calcular_chao(x_mapa, tela, p.y);
@@ -537,6 +522,9 @@ int Tela2(int tela)
     ALLEGRO_BITMAP* personagem = al_load_bitmap("personagem.png");
     ALLEGRO_BITMAP* movimentoleft = al_load_bitmap("personagemleft.png");
     ALLEGRO_BITMAP* movimentoright = al_load_bitmap("personagemright.png");
+    ALLEGRO_BITMAP* socoleft = al_load_bitmap("socoleft.png");
+    ALLEGRO_BITMAP* socoright = al_load_bitmap("socoright.png");
+    ALLEGRO_BITMAP* HABILIDADE = al_load_bitmap("Seringa.png");
     ALLEGRO_BITMAP* vilao = al_load_bitmap("VilaoFase2.png");
     ALLEGRO_BITMAP* tirovilao2 = al_load_bitmap("tirovilao2.png");
     ALLEGRO_BITMAP* GameOver = al_load_bitmap("GameOver.png");
@@ -646,16 +634,28 @@ int Tela2(int tela)
                 al_draw_bitmap(life, 20 + i * 60, 60, 0);
             }
             if (left) {
-                al_draw_bitmap(movimentoleft, p.x, p.y, 0);
+                if (Z) {
+                    al_draw_bitmap(socoleft, p.x, p.y, 0);
+                }
+                else {
+                    al_draw_bitmap(movimentoleft, p.x, p.y, 0);
+                }
             }
             else {
                 if (right) {
-                    al_draw_bitmap(movimentoright, p.x, p.y, 0);
+                    if (Z) {
+                        al_draw_bitmap(socoright, p.x, p.y, 0);
+                    }
+                    else {
+                        al_draw_bitmap(movimentoright, p.x, p.y, 0);
+                    }
                 }
                 else {
                     al_draw_bitmap(personagem, p.x, p.y, 0);
                 }
-
+                if (Z) {
+                    al_draw_bitmap(socoright, p.x, p.y, 0);
+                }
             }
         }
 
@@ -690,6 +690,9 @@ int Tela3(int tela) {
     ALLEGRO_BITMAP* life = al_load_bitmap("life.png");
     ALLEGRO_BITMAP* personagem = al_load_bitmap("personagem.png");
     ALLEGRO_BITMAP* vilao = al_load_bitmap("vilao3.png");
+    ALLEGRO_BITMAP* socoleft = al_load_bitmap("socoleft.png");
+    ALLEGRO_BITMAP* socoright = al_load_bitmap("socoright.png");
+    ALLEGRO_BITMAP* HABILIDADE = al_load_bitmap("Seringa.png");
     ALLEGRO_BITMAP* movimentoleft = al_load_bitmap("personagemleft.png");
     ALLEGRO_BITMAP* movimentoright = al_load_bitmap("personagemright.png");
     ALLEGRO_EVENT_QUEUE* fila = al_create_event_queue();
@@ -756,16 +759,28 @@ int Tela3(int tela) {
             al_draw_bitmap(life, 20 + i * 60, 60, 0);
         }
         if (left) {
-            al_draw_scaled_bitmap(movimentoleft, 0, 0, 30, 27, p.x, p.y, 60, 60, 0);
+            if (Z) {
+                al_draw_bitmap(socoleft, p.x, p.y, 0);
+            }
+            else {
+                al_draw_bitmap(movimentoleft, p.x, p.y, 0);
+            }
         }
         else {
             if (right) {
-                al_draw_scaled_bitmap(movimentoright, 0, 0, 30, 34, p.x, p.y, 60, 60, 0);
+                if (Z) {
+                    al_draw_bitmap(socoright, p.x, p.y, 0);
+                }
+                else {
+                    al_draw_bitmap(movimentoright, p.x, p.y, 0);
+                }
             }
             else {
-                al_draw_scaled_bitmap(personagem, 0, 0, 32, 32, p.x, p.y, 60, 60, 0);
+                al_draw_bitmap(personagem, p.x, p.y, 0);
             }
-
+            if (Z) {
+                al_draw_bitmap(socoright, p.x, p.y, 0);
+            }
         }
         al_flip_display();
     }
@@ -777,13 +792,15 @@ int Tela3(int tela) {
 int Tela4(int tela) {
     struct Posicaopersonagem  p;
     p.x = 100; p.y = 746; p.v[0] = 4; p.vida = 3;
+    struct tiro t;
+    
     struct Vilao4 vilao;
-    bool right = false, left = false, up = false, Z = false, down = false; bool  no_chao = true;
+    bool right = false, left = false, up = false, Z = false, down = false; bool  no_chao = true, space = false;
     int quantvilao = 10;
     int vilaoAtual = -1;
     int chaovilao[10];
     int tempoSpawn = 0;
-    int delaySpawn = 180, tempo = 100;
+    int delaySpawn = 180, tempo = 100, aparece = 0;
     for (int i = 0; i < quantvilao;i++) {
         vilao.x[i] = rand() % 2+1;
     }
@@ -810,6 +827,10 @@ int Tela4(int tela) {
     ALLEGRO_BITMAP* personagem = al_load_bitmap("personagem.png");
     ALLEGRO_BITMAP* movimentoleft = al_load_bitmap("personagemleft.png");
     ALLEGRO_BITMAP* movimentoright = al_load_bitmap("personagemright.png");
+    ALLEGRO_BITMAP* socoleft = al_load_bitmap("socoleft.png");
+    ALLEGRO_BITMAP* socoright = al_load_bitmap("socoright.png");
+    ALLEGRO_BITMAP* rightHABILIDADE = al_load_bitmap("rightSeringa.png");
+    ALLEGRO_BITMAP* leftHABILIDADE = al_load_bitmap("leftSeringa.png");
     ALLEGRO_BITMAP* imageVilao = al_load_bitmap("vilao3.png");
     ALLEGRO_BITMAP* GameOver = al_load_bitmap("GameOver.png");
     ALLEGRO_EVENT_QUEUE* fila = al_create_event_queue();
@@ -836,6 +857,7 @@ int Tela4(int tela) {
             case ALLEGRO_KEY_Z: Z = true; break;
             case ALLEGRO_KEY_DOWN: down = true; break;
             case ALLEGRO_KEY_ESCAPE: tela = 1; break;
+            case ALLEGRO_KEY_SPACE: space = true; break;
             case ALLEGRO_KEY_ENTER: 
                 if (p.x >= 1348 && p.x <= 1436 && contmortos >= 9) {
                     tela = 2;
@@ -852,6 +874,7 @@ int Tela4(int tela) {
             case ALLEGRO_KEY_DOWN:down = false; break;
             case ALLEGRO_KEY_A: left = false; break;
             case ALLEGRO_KEY_D: right = false; break;
+            case ALLEGRO_KEY_SPACE: space = false; break;
             }
         }
         if (p.vida > 0) {
@@ -977,27 +1000,95 @@ int Tela4(int tela) {
                 }
 
             }
+            for (int i = 0; i < vilaoAtual; i++) {
+                if (t.x[0] >= vilao.x[i] - 15 && t.x[0] <= vilao.x[i] + 15) {
 
-            
-            
+                    if (t.y[0] >= vilao.y[i] && t.y[0] <= vilao.y[i] + 30) {
+                            vilao.ativo[i] = false;
+                            aparece = 0;
+                            contmortos++;
+                    }
 
+                }
+
+            }
+            if (right) {
+                if (space) {
+                    aparece = 1;
+                }
+            }
+
+            if (left) {
+                if (space) {
+                    aparece = 2;
+                }
+            }
+            if (aparece == 0) {
+                t.x[0] = p.x;
+                t.y[0] = p.y;
+            }
+            else {
+               
+                    if (aparece == 1) {
+
+                        if (t.x[0] <= p.x + 300) {
+                            t.x[0] += 4;
+                        }
+                        else {
+                            t.x[0] = p.x;
+                            t.y[0] = p.y;
+                            aparece = 0;
+                        }
+
+
+
+                    }
+                    if (aparece == 2) {
+
+                        if (t.x[0] >= p.x - 300) {
+                            t.x[0] -= 4;
+                        }
+                        else {
+                            t.x[0] = p.x;
+                            t.y[0] = p.y;
+                            aparece = 0;
+                        }
+
+                    }
+                
+            }
+           
             al_draw_scaled_bitmap(fundo_Inicial, 0, 0, 1536, 1024, 0, 0, 1600, 900, 0);
             for (int i = 0; i < p.vida; i++) {
                 al_draw_bitmap(life, 20 + i * 60, 60, 0);
             }
             if (left) {
-                al_draw_scaled_bitmap(movimentoleft, 0, 0, 30, 27, p.x, p.y, 40, 40, 0);
+                if (Z) {
+                    al_draw_bitmap(socoleft, p.x, p.y, 0);
+                }
+                else {
+                    al_draw_bitmap(movimentoleft, p.x, p.y, 0);
+                } 
             }
             else {
                 if (right) {
-                    al_draw_scaled_bitmap(movimentoright, 0, 0, 30, 34, p.x, p.y, 40, 40, 0);
+                    if (Z) {
+                        al_draw_bitmap(socoright, p.x, p.y, 0);
+                    }
+                    else {
+                        al_draw_bitmap(movimentoright, p.x, p.y, 0);
+                    }   
                 }
                 else {
-                    al_draw_scaled_bitmap(personagem, 0, 0, 32, 32, p.x, p.y, 40, 40, 0);
+                    al_draw_bitmap(personagem, p.x, p.y, 0);
                 }
-
             }
-
+            if (aparece ==1) {
+                al_draw_scaled_bitmap(rightHABILIDADE, 0, 0, 612, 408, t.x[0], t.y[0] - 5, 60, 60, 0);
+            }
+            if (aparece == 2) {
+                al_draw_scaled_bitmap(leftHABILIDADE, 0, 0,612,408, t.x[0], t.y[0]-5, 60, 60, 0);
+            }
             for (int i = 0; i < vilaoAtual; i++) {
                 if (vilao.ativo[i] == true) {
                     al_draw_scaled_bitmap(imageVilao, 0, 0, 64, 64, vilao.x[i] - 20, vilao.y[i] - 30, 100, 100, 0);

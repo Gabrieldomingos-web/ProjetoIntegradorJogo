@@ -783,7 +783,7 @@ int Tela4(int tela) {
     int vilaoAtual = -1;
     int chaovilao[10];
     int tempoSpawn = 0;
-    int delaySpawn = 180; 
+    int delaySpawn = 180, tempo = 600;
     for (int i = 0; i < quantvilao;i++) {
         vilao.x[i] = rand() % 2+1;
     }
@@ -811,6 +811,7 @@ int Tela4(int tela) {
     ALLEGRO_BITMAP* movimentoleft = al_load_bitmap("personagemleft.png");
     ALLEGRO_BITMAP* movimentoright = al_load_bitmap("personagemright.png");
     ALLEGRO_BITMAP* imageVilao = al_load_bitmap("vilao3.png");
+    ALLEGRO_BITMAP* GameOver = al_load_bitmap("GameOver.png");
     ALLEGRO_EVENT_QUEUE* fila = al_create_event_queue();
     ALLEGRO_TIMER* timer = al_create_timer(1.0 / 60);
     al_register_event_source(fila, al_get_mouse_event_source());
@@ -850,104 +851,136 @@ int Tela4(int tela) {
             case ALLEGRO_KEY_D: right = false; break;
             }
         }
-        if (left) {
-            p.x = Colisao_Left(p.x, p.y, p.v[0], tela);
-        }
-
-        if (right) {
-            p.x = Colisao_Right(p.x, p.y, p.v[0], tela);
-        }
-        chao = calcular_chao(p.x, tela, p.y);
-        if (up && no_chao) {
-            gravidade = -12.0;
-            no_chao = false;
-        }
-        gravidade += 0.5;
-        p.y += gravidade;
-
-        if (p.y >= chao) {
-            p.y = chao;
-            gravidade = 0.0;
-            no_chao = true;
-        }
-        for (int i = 0; i < quantvilao; i++) {
-            vilao.ativo[0] = true;
-            if (vilao.x[i] < p.x) {
-                vilao.x[i] = Colisao_Right(vilao.x[i], vilao.y[i], 2, tela);
+        if (p.vida > 0) {
+            if (left) {
+                p.x = Colisao_Left(p.x, p.y, p.v[0], tela);
             }
-            if (vilao.x[i] > p.x) {
-                vilao.x[i] = Colisao_Left(vilao.x[i], vilao.y[i], 2, tela);
+
+            if (right) {
+                p.x = Colisao_Right(p.x, p.y, p.v[0], tela);
             }
-            if (p.x <= vilao.x[i] + 50 && p.x >= vilao.x[i] - 50) {
-               
-                if (vilao.no_chao[i] == true) {
-                    
-                    if (p.y < vilao.y[i]) {
-                        
-                        vilao.gravidade[i] = -11.0; 
-                        vilao.no_chao[i] = false;
+            chao = calcular_chao(p.x, tela, p.y);
+            if (up && no_chao) {
+                gravidade = -12.0;
+                no_chao = false;
+            }
+            gravidade += 0.5;
+            p.y += gravidade;
+
+            if (p.y >= chao) {
+                p.y = chao;
+                gravidade = 0.0;
+                no_chao = true;
+            }
+            for (int i = 0; i < vilaoAtual; i++) {
+
+                if (vilao.x[i] < p.x) {
+                    vilao.x[i] = Colisao_Right(vilao.x[i], vilao.y[i], 2, tela);
+                }
+                if (vilao.x[i] > p.x) {
+                    vilao.x[i] = Colisao_Left(vilao.x[i], vilao.y[i], 2, tela);
+                }
+                if (p.x <= vilao.x[i] + 50 && p.x >= vilao.x[i] - 50) {
+
+                    if (vilao.no_chao[i] == true) {
+
+                        if (p.y < vilao.y[i]) {
+
+                            vilao.gravidade[i] = -11.0;
+                            vilao.no_chao[i] = false;
+                            vilao.y[i] += vilao.gravidade[i];
+                        }
+                    }
+                }
+                chaovilao[i] = calcular_chao(vilao.x[i], tela, vilao.y[i]);
+
+                if (vilao.y[i] < chaovilao[i]) {
+                    if (vilao.y[i] + vilao.gravidade[i] <= chaovilao[i]) {
                         vilao.y[i] += vilao.gravidade[i];
+                    }
+                    if (vilao.gravidade[i] < 10)
+                    {
+                        vilao.gravidade[i] += 0.5;
+                    }
+                    else if (vilao.y[i] >= chaovilao[i] - 10) {
+                        vilao.y[i]++;
+                    }
+
+                }
+                if (vilao.y[i] == chaovilao[i]) {
+                    vilao.gravidade[i] = 0.0;
+                    vilao.no_chao[i] = true;
+                }
+
+            }
+            tempoSpawn++;
+
+            if (tempoSpawn % 180 == 0 && tempoSpawn / 180 <= 10) {
+                vilaoAtual++;
+                vilao.ativo[vilaoAtual] = true;
+            }
+            if (vilaoAtual == -1 && tempoSpawn >= delaySpawn) {
+                for (int i = 0; i <= quantvilao; i++) {
+                    if (!vilao.ativo[i] && vilao.vida[i]) {
+                        vilao.ativo[i] = true;
+                        vilaoAtual = i;
+                        tempoSpawn = 0;
+                        break;
                     }
                 }
             }
-                chaovilao[i] = calcular_chao(vilao.x[i], tela, vilao.y[i]);
-
-             if (vilao.y[i] < chaovilao[i]) {
-                 if (vilao.y[i] + vilao.gravidade[i] <= chaovilao[i]) {
-                     vilao.y[i] += vilao.gravidade[i];
-                 }
-                 if (vilao.gravidade[i] < 10)
-                 {
-                     vilao.gravidade[i] += 0.5;
-                 }
-                 else if(vilao.y[i]>= chaovilao[i]-10) {
-                     vilao.y[i]++;
-                 }
-                
-             }
-             if (vilao.y[i] == chaovilao[i]) {
-                 vilao.gravidade[i] = 0.0;
-                 vilao.no_chao[i] = true;
-             }
-   
-        }
-        tempoSpawn++;
-        printf("%d",tempoSpawn);
-        if (vilaoAtual == -1 && tempoSpawn >= delaySpawn) {
-            for (int i = 0; i < quantvilao; i++) {
-                if (!vilao.ativo[i] && vilao.vida[i]) {
-                    vilao.ativo[i] = true;
-                    vilaoAtual = i;   
-                    tempoSpawn = 0;
-                    break;
+            if (vilaoAtual != -1) {
+                if (!vilao.vida[vilaoAtual] || vilao.y[vilaoAtual] > 900) {
+                    vilao.ativo[vilaoAtual] = false;
+                    vilaoAtual = -1;
                 }
             }
-        }
-        if (vilaoAtual != -1) {
-            if (!vilao.vida[vilaoAtual] || vilao.y[vilaoAtual] > 900) {
-                vilao.ativo[vilaoAtual] = false;
-                vilaoAtual = -1;
+            printf(" %d ", tempo);
+            for (int i = 0; i < vilaoAtual; i++) {
+                if (p.x >= vilao.x[i] - 10 && p.x <= vilao.x[i] + 10) {
+
+                    if (p.y >= vilao.y[i] && p.y <= vilao.y[i] + 30) {
+                        if (tempo == 600) {
+                           
+                            p.vida--;
+                            tempo=0;
+                        } 
+                    }
+
+                }
+                
             }
-        }
-        al_draw_scaled_bitmap(fundo_Inicial, 0, 0, 1536, 1024, 0, 0, 1600, 900, 0);
-        for (int i = 0; i < p.vida; i++) {
-            al_draw_bitmap(life, 20 + i * 60, 60, 0);
-        }
-        if (left) {
-            al_draw_scaled_bitmap(movimentoleft, 0, 0, 30, 27, p.x, p.y, 40, 40, 0);
-        }
-        else {
-            if (right) {
-                al_draw_scaled_bitmap(movimentoright, 0, 0, 30, 34, p.x, p.y, 40, 40, 0);
+            if (tempo < 600) {
+                tempo++;
+            }
+            
+
+            al_draw_scaled_bitmap(fundo_Inicial, 0, 0, 1536, 1024, 0, 0, 1600, 900, 0);
+            for (int i = 0; i < p.vida; i++) {
+                al_draw_bitmap(life, 20 + i * 60, 60, 0);
+            }
+            if (left) {
+                al_draw_scaled_bitmap(movimentoleft, 0, 0, 30, 27, p.x, p.y, 40, 40, 0);
             }
             else {
-                al_draw_scaled_bitmap(personagem, 0, 0, 32, 32, p.x, p.y, 40, 40, 0);
+                if (right) {
+                    al_draw_scaled_bitmap(movimentoright, 0, 0, 30, 34, p.x, p.y, 40, 40, 0);
+                }
+                else {
+                    al_draw_scaled_bitmap(personagem, 0, 0, 32, 32, p.x, p.y, 40, 40, 0);
+                }
+
             }
 
+            for (int i = 0; i < vilaoAtual; i++) {
+
+                al_draw_scaled_bitmap(imageVilao, 0, 0, 64, 64, vilao.x[i] - 20, vilao.y[i] - 30, 100, 100, 0);
+            }
         }
-        
-        if (vilaoAtual != -1) {
-            al_draw_scaled_bitmap(imageVilao, 0, 0, 64, 64,vilao.x[vilaoAtual] - 20, vilao.y[vilaoAtual] - 30,100, 100, 0);
+      
+        if (p.vida <= 0) {
+            al_draw_scaled_bitmap(fundo_Inicial, 0, 0, 1536, 1024, 0, 0, 1600, 900, 0);
+            al_draw_bitmap(GameOver, 230, -50, 0);
         }
         al_flip_display();
     }

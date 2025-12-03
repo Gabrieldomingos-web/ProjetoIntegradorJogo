@@ -58,7 +58,7 @@ int TelaInicial(int tela) {
                 if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
                     if ((evento.mouse.x >= 645 && evento.mouse.x <= 931) && evento.mouse.y >= 583 && evento.mouse.y <= 701) {
                         sair = true;
-                        tela = 2;
+                        tela = 4;
                     }
                     if ((evento.mouse.x >= 642 && evento.mouse.x <= 961) && evento.mouse.y >= 732 && evento.mouse.y <= 804) {
                         tela = 1;
@@ -101,8 +101,8 @@ int TelaInicial(int tela) {
     al_destroy_bitmap(fundoInstr);
     al_destroy_event_queue(fila);
     al_destroy_display(janela);
-    if (tela == 2) {
-        return 2;
+    if (tela == 4) {
+        return 4;
     }
     else return 1;
 }
@@ -171,7 +171,7 @@ int calcular_chao(int x, int tela, int y) {
         if (x >= 410 && x <= 670 && y <= 788) return 788; 
     }
 }
-int Colisao_Left(int x, int y, int v, int tela) {
+int Colisao_Left(int x, int y, int v, int tela,int vilao) {
     int novo_x = x;
     if (tela == 2) {
         if (y < 631 && x > 0 && x <= 124) novo_x -= v;
@@ -186,6 +186,7 @@ int Colisao_Left(int x, int y, int v, int tela) {
         else if (y <= 640 && x > 1327 && x <= 1379) novo_x -= v;
         else if (y <= 700 && x > 1379 && x <= 1454) novo_x -= v;
         else if (y <= 774 && x > 1454 && x <= 1913)novo_x -= v;
+        else if (vilao==0 && x > 1913 && x <= 1980) novo_x -= v;
         else if (y <= 750 && x > 1913 && x <= 1980) novo_x -= v;
         else if (y <= 774 && x > 1980 && x <= 2381) novo_x -= v;
        
@@ -214,7 +215,7 @@ int Colisao_Left(int x, int y, int v, int tela) {
     }
 }
 
-int Colisao_Right(int x, int y, int v, int tela) {
+int Colisao_Right(int x, int y, int v, int tela, int vilao) {
     int novo_x = x;
     if (tela == 2)
     {
@@ -228,6 +229,7 @@ int Colisao_Right(int x, int y, int v, int tela) {
         else if (y <= 480 && x > 937 && x <= 1007) novo_x += v;
         else if (y <= 421 && x > 1007 && x <= 1102) novo_x += v;
         else if (y <= 774 && x > 1102 && x <= 1908) novo_x += v;
+        else if (vilao==0 && x > 1908 && x < 1980) novo_x += v;
         else if (y <= 750 && x > 1908 && x < 1980) novo_x += v;
         else if (y <= 774 && x >= 1980 && x <= 2204) novo_x += v;
         else if (y <= 737 && x > 2204 && x <= 2238) novo_x += v;
@@ -425,7 +427,7 @@ int Telaestomago(int tela) {
                     }
                     //eixo X
                     if (left) {
-                        int colisao = Colisao_Left(x_mapa, p.y, p.v[0], tela);
+                        int colisao = Colisao_Left(x_mapa, p.y, p.v[0], tela, vidavilao);
                         if (colisao != x_mapa) {
                             x_mapa = colisao;
                             if (x_mapa >= 960 && x_mapa <= 1770) {
@@ -440,7 +442,7 @@ int Telaestomago(int tela) {
                     }
 
                     if (right) {
-                        int colisao = Colisao_Right(x_mapa, p.y, p.v[0], tela);
+                        int colisao = Colisao_Right(x_mapa, p.y, p.v[0], tela,vidavilao);
                         if (colisao != x_mapa) {
                             x_mapa = colisao;
                             if (x_mapa >= 960 && x_mapa <= 1770) {
@@ -728,11 +730,11 @@ int Tela2(int tela){
                 }
                 if (left) {
 
-                    p.x = Colisao_Left(p.x, p.y, p.v[0], tela);
+                    p.x = Colisao_Left(p.x, p.y, p.v[0], tela,0);
                     chao = calcular_chao(p.x, tela, p.y);
                 }
                 if (right) {
-                    p.x = Colisao_Right(p.x, p.y, p.v[0], tela);
+                    p.x = Colisao_Right(p.x, p.y, p.v[0], tela,0);
                     chao = calcular_chao(p.x, tela, p.y);
                 }
                 if (up && no_chao) {
@@ -930,7 +932,8 @@ int Tela3(int tela) {
 
       
             if (p.vida > 0 && vidavilao>0) {
-
+                tempoSpawn++;
+                printf("%d", tempoSpawn);
                 if (left && p.x > 4) p.x -= p.v[0];
                 if (right && p.x < 1575) p.x += p.v[0];
 
@@ -974,7 +977,7 @@ int Tela3(int tela) {
                 }
 
        
-                tempoSpawn++;
+                
 
                 if (tempoSpawn % 50 == 0 && tempoSpawn / 50 <= 14) {
                     vilaoAtual++;
@@ -1211,11 +1214,11 @@ int Tela4(int tela) {
         if (educacional == 2) {
             if (p.vida > 0) {
                 if (left) {
-                    p.x = Colisao_Left(p.x, p.y, p.v[0], tela);
+                    p.x = Colisao_Left(p.x, p.y, p.v[0], tela,0);
                 }
 
                 if (right) {
-                    p.x = Colisao_Right(p.x, p.y, p.v[0], tela);
+                    p.x = Colisao_Right(p.x, p.y, p.v[0], tela,0);
                 }
                 chao = calcular_chao(p.x, tela, p.y);
                 if (up && no_chao) {
@@ -1233,10 +1236,10 @@ int Tela4(int tela) {
                 for (int i = 0; i < vilaoAtual; i++) {
                     if (vilao.ativo[i] == true) {
                         if (vilao.x[i] < p.x) {
-                            vilao.x[i] = Colisao_Right(vilao.x[i], vilao.y[i], 2, tela);
+                            vilao.x[i] = Colisao_Right(vilao.x[i], vilao.y[i], 2, tela,0);
                         }
                         if (vilao.x[i] > p.x) {
-                            vilao.x[i] = Colisao_Left(vilao.x[i], vilao.y[i], 2, tela);
+                            vilao.x[i] = Colisao_Left(vilao.x[i], vilao.y[i], 2, tela,0);
                         }
                         if (p.x <= vilao.x[i] + 50 && p.x >= vilao.x[i] - 50) {
 

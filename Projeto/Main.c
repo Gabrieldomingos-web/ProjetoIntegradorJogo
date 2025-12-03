@@ -58,7 +58,7 @@ int TelaInicial(int tela) {
                 if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
                     if ((evento.mouse.x >= 645 && evento.mouse.x <= 931) && evento.mouse.y >= 583 && evento.mouse.y <= 701) {
                         sair = true;
-                        tela = 4;
+                        tela = 2;
                     }
                     if ((evento.mouse.x >= 642 && evento.mouse.x <= 961) && evento.mouse.y >= 732 && evento.mouse.y <= 804) {
                         tela = 1;
@@ -101,8 +101,8 @@ int TelaInicial(int tela) {
     al_destroy_bitmap(fundoInstr);
     al_destroy_event_queue(fila);
     al_destroy_display(janela);
-    if (tela == 4) {
-        return 4;
+    if (tela == 2) {
+        return 2;
     }
     else return 1;
 }
@@ -272,6 +272,7 @@ int Colisao_Right(int x, int y, int v, int tela, int vilao) {
 bool Dano(int x, int y) {
     if (x >= 300 && x <= 332 && y == 774)return true;
     if (x >= 467 && x <= 508 && y == 739)return true;
+    if (x >= 544 && x <= 568 && y == 739)return true;
     if (x >= 1327 && x <= 1340 && y == 638)return true;
     if (x >= 1379 && x <= 1380 && y == 696)return true;
     if (x >= 1552 && x <= 1636 && y == 774)return true;
@@ -337,6 +338,7 @@ int Telaestomago(int tela) {
                 case ALLEGRO_KEY_ESCAPE: tela = 1; break;
                 case ALLEGRO_KEY_SPACE: space = true; break;
                 case ALLEGRO_KEY_ENTER:
+                    printf("%d",x_mapa);
                     if (x_mapa >= 376 && x_mapa <= 400) { 
                         educacional = 1;
                     }
@@ -375,12 +377,12 @@ int Telaestomago(int tela) {
                     if (educacional == 2) {
                         al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Informação");
                         al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
-                            "Com a tecla Z é possivel você bater no vírus se estiver perto dele.\nPara utilizar a habilidade é necessário definir a direção.\n ");
+                            "Com a tecla Z é possivel você bater no vírus se estiver perto dele.\n Para utilizar a habilidade é necessário definir a direção.\n ");
                     }
                     if (educacional == 3) {
                         al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Curiosidade");
                         al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
-                            "O estômago produz um ácido muito forte chamado ácido clorídrico (HCl).Ele é uma das substâncias mais importantes da digestão humana.A acidez dentro do estômago é tão forte que poderia dissolver o próprio órgão. Por isso, o estômago renova sua camada de muco inteira a cada poucos dias.");
+                            "O estômago produz um ácido muito forte chamado ácido clorídrico (HCl).Ele é uma das substâncias mais importantes da digestão humana. A acidez dentro do estômago é tão forte que poderia dissolver o próprio órgão. Por isso, o estômago renova sua camada de muco inteira a cada poucos dias.");
 
                     }
                     if (educacional == 4) {
@@ -558,13 +560,10 @@ int Telaestomago(int tela) {
                             else {
                                 al_draw_bitmap(movimentoright, p.x, p.y, 0);
                             }
-                        }
-                        else {
+                        }else {
                             al_draw_bitmap(personagem, p.x, p.y, 0);
                         }
-                        if (z) {
-                            al_draw_bitmap(socoright, p.x, p.y, 0);
-                        }
+              
                     }
                     if (vidavilao > 0) {
                         al_draw_scaled_bitmap(vilao, 0, 0, 32, 32, 1928 + f.width, 750, 60, 60, 0);
@@ -1204,7 +1203,7 @@ int Tela4(int tela) {
         } if (educacional == 0) {
             al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Curiosidade");
             al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
-                "Os rins podem filtrar cerca de 180 litros de sangue por DIA e ajuda a remover substância tóxicas, restos de bactérias e outros resíduos que podem ser prejudiciais a saúde.");
+                "Os rins podem filtrar cerca de 180 litros de sangue por dia e ajuda a remover substância tóxicas, restos de bactérias e outros resíduos que podem ser prejudiciais a saúde.");
         }
         if (educacional == 1) {
             al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Contexto e dica");

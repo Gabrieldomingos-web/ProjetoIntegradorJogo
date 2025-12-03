@@ -20,9 +20,9 @@ struct tiro {
     int x[3], y[3];
 };
 struct Vilao4 {
-    int x[10], y[10];
-    bool vida[10], ativo[10], no_chao[10];
-    float gravidade[10];
+    int x[15], y[15];
+    bool vida[15], ativo[15], no_chao[15];
+    float gravidade[15];
 };
 int TelaInicial(int tela) {
     bool sair = false;
@@ -285,7 +285,7 @@ int Telaestomago(int tela) {
    
     bool right = false, left = false, lock = true, up = false, dano = false, space = false;
     int x_mapa = p.x;
-    int sair = 1, vidavilao = 1, educacional=0;
+    int sair = 1, vidavilao = 5, educacional=0;
     int tempo = 0, aparece = 0;
     bool desenhar = false, z = false;
     int camera = 4, xhabilidade=p.x, yhabilidade = p.y-5;
@@ -345,7 +345,7 @@ int Telaestomago(int tela) {
                 if (evento.mouse.x >= 644 && evento.mouse.x <= 948 && evento.mouse.y >= 740 && evento.mouse.y <= 822) {
                     educacional++;
                 }
-                printf("Clique detectado em (%d, %d)\n", evento.mouse.x, evento.mouse.y);
+              
             }
             else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
                 switch (evento.keyboard.keycode) {
@@ -368,7 +368,7 @@ int Telaestomago(int tela) {
                         tempo = 30;
                     }
                 }
-                if (educacional > 0 && educacional < 4) {
+                if (educacional > 0 && educacional < 5) {
                     al_draw_scaled_bitmap(imagem, 0, 0, 1920, 1080, 0, 0, 1600, 900, 0);
                     if (educacional == 2) {
                         al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Informação");
@@ -387,7 +387,7 @@ int Telaestomago(int tela) {
                             "As vacinas e alguns tratamentos utilizam partes enfraquecidas, inativadas ou fragmentadas de vírus para ensinar o sistema imunológico a reconhecê-los sem causar a doença. Dessa forma, o corpo cria anticorpos e fica preparado para futuras infecções. Em certos remédios modernos, vírus modificados podem ser usados apenas como “transportadores” de informações, sem oferecer risco. Essa técnica zésegura e representa uma das formas mais eficazes de prevenção e controle de doenças.\n\n Então para que o organismo consiga usar sua “habilidade”, é necessário primeiro identificar o vírus.");
                     }
                     if (educacional == 1) {
-                        al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Curiosidade");
+                        al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Contexto");
                         al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
                             "O corpo entrou em estado de alerta. Após o surgimento de um novo vírus, o estômago, o rim, o cérebro e o coração foram rapidamente afetados. Identificamos que diversos vírus e bactérias nocivas aproveitaram a oportunidade para invadir e tentar dominar esses órgãos.\n Você foi enviado ao interior do estômago como um agente neutralizador, com a missão de eliminar todas as ameaças que estão causando danos ao corpo humano.");
                     }
@@ -506,6 +506,7 @@ int Telaestomago(int tela) {
                             if (x_mapa >= 1912 && x_mapa <= 1980 && p.y > 760) {
                                 tempo = 30;
                                 p.vida--;
+                                lock = false;
                             }
                         }
                         if (x_mapa >= 1460 && t.x[0] >= 1460 + f.width && x_mapa <= 2204 && t.x[0] <= 2204 + f.width) {
@@ -610,7 +611,7 @@ int Tela2(int tela){
         t.x[j] = 740;
         t.y[j] = 160;
     }
-    int vida = 5 , educacional = 0;
+    int vida = 1 , educacional = 0;
     float gravidade = 0;
     int tempo = 0;
     int time = 0;
@@ -656,7 +657,6 @@ int Tela2(int tela){
             case ALLEGRO_KEY_Z: Z = true; break;
             case ALLEGRO_KEY_ESCAPE: tela = 1; break;
             case ALLEGRO_KEY_ENTER:
-                printf("%d", p.y);
                 if (p.x == 1456 && p.y == 557 && vida == 0) {
                     return tela = 5;
                 }
@@ -810,224 +810,314 @@ int Tela2(int tela){
 }
 int Tela3(int tela) {
     struct Posicaopersonagem  p;
+    struct Vilao4 vilao;
     p.x = 30; p.y = 746; p.v[0] = 4; p.vida = 3;
+
     struct tiro t;
-    bool right = false, left = false, up = false, Z = false, down = false; bool  no_chao = true, space=false;
-    int chao = 746, educacional = 0, aparece = 0;
+    bool right = false, left = false, up = false, Z = false, down = false;
+    bool no_chao = true, space = false;
+    int chao = 746, educacional = 0, aparece = 0, yvilao = 670, xvilao = 1300;
     float gravidade = 0.0;
+    int quantvilao = 15;
+    int vilaoAtual = -1;
+    int chaovilao[15];
+    int tempoSpawn = 0;
+    int delaySpawn = 180, tempo = 100, vidavilao = 1;
+
+    for (int i = 0; i < quantvilao; i++) {
+        vilao.x[i] = rand() % 2 + 1;
+    }
+
+    for (int i = 0; i < quantvilao; i++) {
+        if (vilao.x[i] == 1) {
+            vilao.x[i] = 1300;
+            vilao.y[i] = 756;
+            chaovilao[i] = 0;
+        }
+
+        vilao.vida[i] = true;
+        vilao.ativo[i] = false;
+        vilao.gravidade[i] = 0.0;
+        vilao.no_chao[i] = true;
+    }
+
     ALLEGRO_DISPLAY* janela = al_create_display(1600, 900);
     ALLEGRO_BITMAP* fundo_Inicial = al_load_bitmap("Fase 3.png");
     ALLEGRO_BITMAP* life = al_load_bitmap("life.png");
     ALLEGRO_BITMAP* personagem = al_load_bitmap("personagem.png");
-    ALLEGRO_BITMAP* vilao = al_load_bitmap("vilao3.png");
+    ALLEGRO_BITMAP* Vilao = al_load_bitmap("vilao4.png");
     ALLEGRO_BITMAP* imagem = al_load_bitmap("Páginaeducacional.png");
+    ALLEGRO_BITMAP* GameOver = al_load_bitmap("GameOver.png");
     ALLEGRO_FONT* fonte = al_load_ttf_font("arial.ttf", 40, 0);
     ALLEGRO_BITMAP* socoleft = al_load_bitmap("socoleft.png");
+    ALLEGRO_BITMAP* telavenceu = al_load_bitmap("telavenceu.png");
     ALLEGRO_BITMAP* socoright = al_load_bitmap("socoright.png");
+    ALLEGRO_BITMAP* imageVilao = al_load_bitmap("vilao3.png");
     ALLEGRO_BITMAP* rightHABILIDADE = al_load_bitmap("rightSeringa.png");
     ALLEGRO_BITMAP* leftHABILIDADE = al_load_bitmap("leftSeringa.png");
     ALLEGRO_BITMAP* movimentoleft = al_load_bitmap("personagemleft.png");
     ALLEGRO_BITMAP* movimentoright = al_load_bitmap("personagemright.png");
     ALLEGRO_EVENT_QUEUE* fila = al_create_event_queue();
     ALLEGRO_TIMER* timer = al_create_timer(1.0 / 60);
+
     al_register_event_source(fila, al_get_mouse_event_source());
     al_register_event_source(fila, al_get_keyboard_event_source());
     al_register_event_source(fila, al_get_timer_event_source(timer));
     al_start_timer(timer);
-    while (tela == 4) {
-        ALLEGRO_EVENT evento;
 
+    while (tela == 4) {
+
+        ALLEGRO_EVENT evento;
         al_wait_for_event(fila, &evento);
-        if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-            tela = 1;
-        }
+
+        if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) tela = 1;
+
         if (evento.type == ALLEGRO_EVENT_KEY_DOWN) {
             switch (evento.keyboard.keycode) {
             case ALLEGRO_KEY_LEFT: left = true; break;
             case ALLEGRO_KEY_RIGHT: right = true; break;
             case ALLEGRO_KEY_A: left = true; break;
             case ALLEGRO_KEY_D: right = true; break;
-            case ALLEGRO_KEY_UP:up = true; break;
-            case ALLEGRO_KEY_W:up = true; break;
+            case ALLEGRO_KEY_UP: up = true; break;
+            case ALLEGRO_KEY_W: up = true; break;
             case ALLEGRO_KEY_Z: Z = true; break;
             case ALLEGRO_KEY_DOWN: down = true; break;
             case ALLEGRO_KEY_ESCAPE: tela = 1; break;
             case ALLEGRO_KEY_SPACE: space = true; break;
-            case ALLEGRO_KEY_ENTER: printf(" x = %d y = %d", p.x, p.y);
             }
         }
         if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
             if (evento.mouse.x >= 644 && evento.mouse.x <= 948 && evento.mouse.y >= 740 && evento.mouse.y <= 822) {
                 educacional++;
             }
-            printf("Clique detectado em (%d, %d)\n", evento.mouse.x, evento.mouse.y);
         }
-        else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
+
+        if (evento.type == ALLEGRO_EVENT_KEY_UP) {
             switch (evento.keyboard.keycode) {
             case ALLEGRO_KEY_LEFT: left = false; break;
             case ALLEGRO_KEY_RIGHT: right = false; break;
-            case ALLEGRO_KEY_UP:up = false; break;
-            case ALLEGRO_KEY_W:up = false; break;
-            case ALLEGRO_KEY_Z:Z = false; break;
-            case ALLEGRO_KEY_DOWN:down = false; break;
+            case ALLEGRO_KEY_UP: up = false; break;
+            case ALLEGRO_KEY_W: up = false; break;
+            case ALLEGRO_KEY_Z: Z = false; break;
+            case ALLEGRO_KEY_DOWN: down = false; break;
             case ALLEGRO_KEY_A: left = false; break;
             case ALLEGRO_KEY_D: right = false; break;
             case ALLEGRO_KEY_SPACE: space = false; break;
             }
         }
+
         if (educacional < 2) {
             al_draw_scaled_bitmap(imagem, 0, 0, 1920, 1080, 0, 0, 1600, 900, 0);
-        } if (educacional == 0) {
-            al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Contexto");
-            al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
-                "Após enfrentar infecções em diversos órgãos e impedir a destruição do cérebro, agora que os outros vírus e bacterias não estão mais atrapalhando descobrimos que na verdade: o vírus principal nunca teve como alvo apenas um órgão. Ele estava manipulando todo o sistema circulatório para alcançar o coração, o centro que mantém o corpo vivo. Agora, o coração está entrando em falência. As câmaras cardíacas estão pulsando de forma irregular, o fluxo sanguíneo foi comprometido.\n\nVocê o agente neutralizador é a última esperança.");
         }
+
+        if (educacional == 0) {
+            al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Contexto");
+            al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350,
+                al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
+                "Após enfrentar infecções em diversos órgãos e impedir a destruição do cérebro, ..."
+            );
+        }
+
         if (educacional == 1) {
             al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Curiosidade");
-            al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
-                "Enquanto você combate as bactérias, o coração continua trabalhando sem pausa: ele bate mais de 100 mil vezes por dia, até quando você dorme!  Ao longo da vida, isso passa de 3 bilhões de batidas.\n\nAqui dentro, cada batida é energia pura pra sua missão!");
+            al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350,
+                al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
+                "Enquanto você combate as bactérias, o coração continua trabalhando sem pausa..."
+            );
         }
-        if (educacional == 2) {
-            if (p.vida > 0) {
-                if (p.x > 4 && p.x < 1579) {
-                    if (left) {
-                        p.x -= p.v[0];
-                    }
-                }
 
-                if (p.x > 0 && p.x < 1575) {
-                    if (right) {
-                        p.x += p.v[0];
-                    }
-                }
+        if (educacional == 2) {
+
+      
+            if (p.vida > 0 && vidavilao>0) {
+
+                if (left && p.x > 4) p.x -= p.v[0];
+                if (right && p.x < 1575) p.x += p.v[0];
+
                 if (up && no_chao) {
                     gravidade = -12.0;
                     no_chao = false;
                 }
+
                 gravidade += 0.5;
                 p.y += gravidade;
 
                 if (p.y >= chao) {
                     p.y = chao;
-                    gravidade = 0.0;
+                    gravidade = 0;
                     no_chao = true;
                 }
-                if (right || left) {
-                    if (space) {
-                        t.x[0] = p.x;
-                        t.y[0] = p.y;
-                    }
-                }
-                if (right) {
-                    if (space) {
-                        aparece = 1;
-                    }
+
+                if (right && space) aparece = 1;
+                if (left && space) aparece = 2;
+
+                if (aparece == 1) {
+                    t.x[0] += 8;
+                    if (t.x[0] > p.x + 600) aparece = 0;
                 }
 
-                if (left) {
-                    if (space) {
-                        aparece = 2;
-                    }
+                if (aparece == 2) {
+                    t.x[0] -= 8;
+                    if (t.x[0] < p.x - 600) aparece = 0;
                 }
+
                 if (aparece == 0) {
-                    t.x[0] = 0;
-                    t.y[0] = 0;
+                    t.x[0] = p.x;
+                    t.y[0] = p.y;
                 }
-                else {
 
-                    if (aparece == 1) {
+                for (int i = 0; i <= vilaoAtual; i++) {
+                    if (vilao.ativo[i]) {
+                        if (vilao.x[i] < p.x) vilao.x[i] += 4;
+                        if (vilao.x[i] > p.x) vilao.x[i] -= 4;
+                    }
+                }
 
-                        if (t.x[0] <= p.x + 600) {
-                            t.x[0] += 8;
+       
+                tempoSpawn++;
+
+                if (tempoSpawn % 50 == 0 && tempoSpawn / 50 <= 14) {
+                    vilaoAtual++;
+                    vilao.ativo[vilaoAtual] = true;
+                }
+
+       
+                for (int i = 0; i <= vilaoAtual; i++) {
+                    if (vilao.ativo[i]) {
+                        if (p.x >= vilao.x[i] - 10 && t.x[0] <= vilao.x[i] + 10) {
+                            if (p.y >= vilao.y[i] && p.y <= vilao.y[i] + 30) {
+                                if (tempo == 100) {
+                                    p.vida--;
+                                    tempo = 0;
+                                }
+                            }
                         }
-                        else {
-                            t.x[0] = p.x;
-                            t.y[0] = p.y;
+                    }
+                }
+
+                if (tempo < 100) tempo++;
+
+ 
+
+                for (int i = 0; i <= vilaoAtual; i++) {
+                    if (vilao.ativo[i]) {
+
+
+                        if (p.x + 40 >= vilao.x[i] - 20 && p.x <= vilao.x[i] + 20 && p.y >= vilao.y[i] - 20 &&p.y <= vilao.y[i] + 20) {
+                            p.vida--;
+                            vilao.ativo[i] = false;
+                        }
+                    }
+                }
+                if (Z) {
+                    if (p.x + 50 >= xvilao && p.x <= xvilao + 150 &&
+                        p.y >= yvilao - 80 && p.y <= yvilao + 80) {
+                        vidavilao--;
+                    }
+                }
+                
+                if (Z) {
+                    for (int i = 0; i <= vilaoAtual; i++) {
+                        if (vilao.ativo[i]) {
+
+                            if (t.x[0] >= vilao.x[i] - 20 && t.x[0] <= vilao.x[i] + 20 && t.y[0] >= vilao.y[i] - 20 && t.y[0] <= vilao.y[i] + 20) {
+                                vilao.ativo[i] = false;
+                            }
+                        }
+                    }
+                }
+                for (int i = 0; i <= vilaoAtual; i++) {
+                    if (vilao.ativo[i]) {
+                        
+
+                        if (t.x[0] >= vilao.x[i] - 15 && t.x[0] <= vilao.x[i] + 15) {
+                            vilao.ativo[i] = false;
                             aparece = 0;
                         }
-
-
-
                     }
-                    if (aparece == 2) {
-
-                        if (t.x[0] >= p.x - 600) {
-                            t.x[0] -= 8;
-                        }
-                        else {
-                            t.x[0] = p.x;
-                            t.y[0] = p.y;
-                            aparece = 0;
-                        }
-
-                    }
-
                 }
+
+
+     
                 al_clear_to_color(al_map_rgb(0, 0, 0));
                 al_draw_scaled_bitmap(fundo_Inicial, 0, 0, 1920, 1080, 0, 0, 1600, 900, 0);
-                for (int i = 0; i < p.vida; i++) {
+
+
+                for (int i = 0; i < p.vida; i++)
                     al_draw_bitmap(life, 20 + i * 60, 60, 0);
-                }
+
                 if (left) {
-                    if (Z) {
-                        al_draw_scaled_bitmap(socoleft, 0, 0, 27, 30, p.x, p.y, 60, 60, 0);
-                    }
-                    else {
-                        al_draw_scaled_bitmap(movimentoleft, 0, 0, 30, 27, p.x, p.y, 60, 60, 0);
-                    }
+                    if (Z) al_draw_scaled_bitmap(socoleft, 0, 0, 27, 30, p.x, p.y, 60, 60, 0);
+                    else al_draw_scaled_bitmap(movimentoleft, 0, 0, 30, 27, p.x, p.y, 60, 60, 0);
+                }
+                else if (right) {
+                    if (Z) al_draw_scaled_bitmap(socoright, 0, 0, 24, 34, p.x, p.y, 60, 60, 0);
+                    else al_draw_scaled_bitmap(movimentoright, 0, 0, 30, 30, p.x, p.y, 60, 60, 0);
                 }
                 else {
-                    if (right) {
-                        if (Z) {
-                            al_draw_scaled_bitmap(socoright, 0, 0, 24, 34, p.x, p.y, 60, 60, 0);
-                            
-                        }
-                        else {
-                            al_draw_scaled_bitmap(movimentoright, 0, 0, 30, 30, p.x, p.y, 60, 60, 0);
-                            
-                        }
-                    }
-                    else {
-                        al_draw_scaled_bitmap(personagem,0,0,32,32,p.x, p.y,60,60, 0);
-                    }
-                    
+                    al_draw_scaled_bitmap(personagem, 0, 0, 32, 32, p.x, p.y, 60, 60, 0);
                 }
-                if (aparece == 1) {
+
+                if (vidavilao == 1) {
+                    al_draw_scaled_bitmap(Vilao, 0, 0, 500, 500, xvilao, yvilao, 150, 150, 0);
+                  }
+                
+
+         
+                if (aparece == 1)
                     al_draw_scaled_bitmap(rightHABILIDADE, 0, 0, 612, 408, t.x[0], t.y[0] - 5, 80, 80, 0);
-                }
-                if (aparece == 2) {
+
+                if (aparece == 2)
                     al_draw_scaled_bitmap(leftHABILIDADE, 0, 0, 612, 408, t.x[0], t.y[0] - 5, 80, 80, 0);
+
+          
+                for (int i = 0; i <= vilaoAtual; i++) {
+                    if (vilao.ativo[i]) {
+                        al_draw_scaled_bitmap(imageVilao, 0, 0, 64, 64,
+                            vilao.x[i] - 20, vilao.y[i] - 30, 100, 100, 0);
+                    }
                 }
+
             }
 
+            if (p.vida <= 0) {
+                al_draw_scaled_bitmap(fundo_Inicial, 0, 0, 1536, 1024, 0, 0, 1600, 900, 0);
+                al_draw_bitmap(GameOver, 230, -50, 0);
+            }
+            if (vidavilao <= 0) {
+                al_draw_scaled_bitmap(telavenceu, 0, 0, 1920, 1080, 0, 0, 1600, 900, 0);
+               
+            }
         }
-       
+
         al_flip_display();
     }
+
     al_destroy_bitmap(fundo_Inicial);
     al_destroy_event_queue(fila);
     al_destroy_display(janela);
     return tela;
 }
+
 int Tela4(int tela) {
     struct Posicaopersonagem  p;
     p.x = 100; p.y = 746; p.v[0] = 4; p.vida = 3;
     struct tiro t;
-    
+
     struct Vilao4 vilao;
-    bool right = false, left = false, up = false,lock=true, Z = false, down = false; bool  no_chao = true, space = false;
+    bool right = false, left = false, up = false, lock = true, Z = false, down = false; bool  no_chao = true, space = false;
     int quantvilao = 10;
     int vilaoAtual = -1;
     int chaovilao[10];
     int tempoSpawn = 0;
     int delaySpawn = 180, tempo = 100, aparece = 0;
-    for (int i = 0; i < quantvilao;i++) {
-        vilao.x[i] = rand() % 2+1;
+    for (int i = 0; i < quantvilao; i++) {
+        vilao.x[i] = rand() % 2 + 1;
     }
     for (int i = 0; i < quantvilao; i++) {
         if (vilao.x[i] == 1) {
             vilao.x[i] = 288;
-            vilao.y[i] =327;
+            vilao.y[i] = 327;
             chaovilao[i] = 0;
         }
         else {
@@ -1039,7 +1129,7 @@ int Tela4(int tela) {
         vilao.gravidade[i] = 0.0;
         vilao.no_chao[i] = true;
     }
-    int chao, contmortos = 0, educacional=0;
+    int chao, contmortos = 0, educacional = 0;
     float gravidade = 0.0;
     ALLEGRO_DISPLAY* janela = al_create_display(1600, 900);
     ALLEGRO_BITMAP* imagem = al_load_bitmap("Páginaeducacional.png");
@@ -1081,17 +1171,17 @@ int Tela4(int tela) {
             case ALLEGRO_KEY_DOWN: down = true; break;
             case ALLEGRO_KEY_ESCAPE: tela = 1; break;
             case ALLEGRO_KEY_SPACE: space = true; break;
-            case ALLEGRO_KEY_ENTER: 
+            case ALLEGRO_KEY_ENTER:
                 if (p.x >= 1348 && p.x <= 1436 && contmortos >= 9) {
                     tela = 4;
                 }
             }
-        }   
+        }
         if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
             if (evento.mouse.x >= 644 && evento.mouse.x <= 948 && evento.mouse.y >= 740 && evento.mouse.y <= 822) {
                 educacional++;
             }
-           
+
         }
         else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
             switch (evento.keyboard.keycode) {
@@ -1355,7 +1445,7 @@ int Tela4(int tela) {
             }
 
         }
-        
+
         if (p.vida <= 0) {
             al_draw_scaled_bitmap(fundo_Inicial, 0, 0, 1536, 1024, 0, 0, 1600, 900, 0);
             al_draw_bitmap(GameOver, 230, -50, 0);
@@ -1367,6 +1457,7 @@ int Tela4(int tela) {
     al_destroy_display(janela);
     return tela;
 }
+
 
 int main() {
     srand(time(NULL));

@@ -58,7 +58,7 @@ int TelaInicial(int tela) {
                 if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
                     if ((evento.mouse.x >= 645 && evento.mouse.x <= 931) && evento.mouse.y >= 583 && evento.mouse.y <= 701) {
                         sair = true;
-                        tela = 4;
+                        tela = 2;
                     }
                     if ((evento.mouse.x >= 642 && evento.mouse.x <= 961) && evento.mouse.y >= 732 && evento.mouse.y <= 804) {
                         tela = 1;
@@ -101,8 +101,8 @@ int TelaInicial(int tela) {
     al_destroy_bitmap(fundoInstr);
     al_destroy_event_queue(fila);
     al_destroy_display(janela);
-    if (tela == 4) {
-        return 4;
+    if (tela == 2){
+        return 2
     }
     else return 1;
 }

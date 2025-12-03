@@ -101,8 +101,8 @@ int TelaInicial(int tela) {
     al_destroy_bitmap(fundoInstr);
     al_destroy_event_queue(fila);
     al_destroy_display(janela);
-    if (tela == 2){
-        return 2
+    if (tela == 2) {
+        return 2;
     }
     else return 1;
 }

@@ -58,7 +58,7 @@ int TelaInicial(int tela) {
                 if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
                     if ((evento.mouse.x >= 645 && evento.mouse.x <= 931) && evento.mouse.y >= 583 && evento.mouse.y <= 701) {
                         sair = true;
-                        tela = 2;
+                        tela = 4;
                     }
                     if ((evento.mouse.x >= 642 && evento.mouse.x <= 961) && evento.mouse.y >= 732 && evento.mouse.y <= 804) {
                         tela = 1;
@@ -101,8 +101,8 @@ int TelaInicial(int tela) {
     al_destroy_bitmap(fundoInstr);
     al_destroy_event_queue(fila);
     al_destroy_display(janela);
-    if (tela == 2) {
-        return 2;
+    if (tela == 4) {
+        return 4;
     }
     else return 1;
 }
@@ -238,7 +238,7 @@ int Colisao_Right(int x, int y, int v, int tela) {
     if (tela == 3) {
         if (x >= -5 && x <= 550 && y <= 403) novo_x += v;
         if (x >= 486 && x < 516 && y > 403 && y <= 529) novo_x += v;
-        if (x >= 516 && x < 663 && y > 403 && y <= 523) novo_x += v;
+        if (x >= 516 && x < 663 && y > 250 && y <= 523) novo_x += v;
         if (x >= 664 && x < 876 && y > 250 && y <= 483) novo_x += v;
         if (x >= 876 && x <= 1138 && y > 250 && y <= 473) novo_x += v;
         if (x >= 988 && x < 1138 && y > 483 && y <= 653) novo_x += v;
@@ -370,25 +370,30 @@ int Telaestomago(int tela) {
                 }
                 if (educacional > 0 && educacional < 4) {
                     al_draw_scaled_bitmap(imagem, 0, 0, 1920, 1080, 0, 0, 1600, 900, 0);
-                    if (educacional == 1) {
+                    if (educacional == 2) {
                         al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Informação");
                         al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
                             "Com a tecla Z é possivel você bater no vírus se estiver perto dele.\nPara utilizar a habilidade é necessário definir a direção.\n ");
                     }
-                    if (educacional == 2) {
+                    if (educacional == 3) {
                         al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Curiosidade");
                         al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
                             "O estômago produz um ácido muito forte chamado ácido clorídrico (HCl).Ele é uma das substâncias mais importantes da digestão humana.A acidez dentro do estômago é tão forte que poderia dissolver o próprio órgão. Por isso, o estômago renova sua camada de muco inteira a cada poucos dias.");
 
                     }
-                    if (educacional == 3) {
+                    if (educacional == 4) {
                         al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Curiosidade");
                         al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
                             "As vacinas e alguns tratamentos utilizam partes enfraquecidas, inativadas ou fragmentadas de vírus para ensinar o sistema imunológico a reconhecê-los sem causar a doença. Dessa forma, o corpo cria anticorpos e fica preparado para futuras infecções. Em certos remédios modernos, vírus modificados podem ser usados apenas como “transportadores” de informações, sem oferecer risco. Essa técnica zésegura e representa uma das formas mais eficazes de prevenção e controle de doenças.\n\n Então para que o organismo consiga usar sua “habilidade”, é necessário primeiro identificar o vírus.");
                     }
+                    if (educacional == 1) {
+                        al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Curiosidade");
+                        al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
+                            "O corpo entrou em estado de alerta. Após o surgimento de um novo vírus, o estômago, o rim, o cérebro e o coração foram rapidamente afetados. Identificamos que diversos vírus e bactérias nocivas aproveitaram a oportunidade para invadir e tentar dominar esses órgãos.\n Você foi enviado ao interior do estômago como um agente neutralizador, com a missão de eliminar todas as ameaças que estão causando danos ao corpo humano.");
+                    }
                      
                 }
-                if (educacional == 4) {
+                if (educacional == 5) {
                     educacional = 0;
                 }
                 if (educacional < 1) {
@@ -605,7 +610,7 @@ int Tela2(int tela){
         t.x[j] = 740;
         t.y[j] = 160;
     }
-    int vida = 1, educacional = 0;
+    int vida = 5 , educacional = 0;
     float gravidade = 0;
     int tempo = 0;
     int time = 0;
@@ -648,9 +653,10 @@ int Tela2(int tela){
             case ALLEGRO_KEY_D: right = true; break;
             case ALLEGRO_KEY_UP:up = true; break;
             case ALLEGRO_KEY_W:up = true; break;
-            case ALLEGRO_KEY_Z: printf("%d %d", p.x, p.y);  Z = true; break;
+            case ALLEGRO_KEY_Z: Z = true; break;
             case ALLEGRO_KEY_ESCAPE: tela = 1; break;
             case ALLEGRO_KEY_ENTER:
+                printf("%d", p.y);
                 if (p.x == 1456 && p.y == 557 && vida == 0) {
                     return tela = 5;
                 }
@@ -660,7 +666,6 @@ int Tela2(int tela){
             if (evento.mouse.x >= 644 && evento.mouse.x <= 948 && evento.mouse.y >= 740 && evento.mouse.y <= 822) {
                 educacional++;
             }
-            printf("Clique detectado em (%d, %d)\n", evento.mouse.x, evento.mouse.y);
         }
         else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
             switch (evento.keyboard.keycode) {
@@ -676,19 +681,24 @@ int Tela2(int tela){
         }
 
 
-        if (educacional < 2) {
+        if (educacional < 3) {
             al_draw_scaled_bitmap(imagem, 0, 0, 1920, 1080, 0, 0, 1600, 900, 0);
         }
         if (educacional == 0) {
-            al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Dica");
+            al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Curiosidade");
             al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
-                "Quando uma pessoa imagina algo — como um alimento, um animal ou uma situação cotidiana — as mesmas regiões do cérebro que seriam utilizadas se aquilo estivesse realmente acontecendo são ativadas. Isso significa que, mesmo sem estímulos externos, o cérebro recria internamente uma experiência semelhante à realidade.\nAssim, a imaginação não é um processo isolado, mas uma forma de o cérebro “simular” o mundo, utilizando circuitos muito parecidos com os que usa para ver, ouvir e agir.");
-        }if (educacional == 1) {
+                "Foi identificado que o Vírus da Raiva, antes quase inativo, conseguiu atravessar a barreira de proteção do cérebro — algo que poucas ameaças são capazes de fazer. Agora, ele está se espalhando rapidamente, dominando conexões nervosas e interrompendo sinais essenciais.\nAs áreas responsáveis pela memória, coordenação e emoções estão entrando em colapso.\nVocê, agente neutralizador, foi enviado para impedir uma catástrofe total.Sua missão é salvar as regiões infectadas e eliminar as partículas do Vírus da Raiva antes que o dano se torne irreversível. ");
+        }
+        if (educacional == 1) {
+            al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Curiosidade");
+            al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
+                "Quando uma pessoa imagina algo  como um alimento, um animal ou uma situação cotidiana  as mesmas regiões do cérebro que seriam utilizadas se aquilo estivesse realmente acontecendo são ativadas. Isso significa que, mesmo sem estímulos externos, o cérebro recria internamente uma experiência semelhante à realidade.\nAssim, a imaginação não é um processo isolado, mas uma forma de o cérebro “simular” o mundo, utilizando circuitos muito parecidos com os que usa para ver, ouvir e agir.");
+        }if (educacional == 2) {
             al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Dica");
             al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
                 "Para concluir a fase e curar o cérebro, você precisará localizar e derrotar o vírus que está causando o desequilíbrio. Explore com atenção: há uma passagem oculta que leva diretamente até ele.\nLembre - se: nesta fase, o uso da habilidade está desativado.Reste apenas sua percepção e coragem para avançar.");
         }
-        if (educacional == 2) {
+        if (educacional == 3) {
             if (tempo <= 1200) tempo++;
 
 
@@ -801,17 +811,21 @@ int Tela2(int tela){
 int Tela3(int tela) {
     struct Posicaopersonagem  p;
     p.x = 30; p.y = 746; p.v[0] = 4; p.vida = 3;
-    bool right = false, left = false, up = false, Z = false, down = false; bool  no_chao = true;
-    int chao = 746; 
+    struct tiro t;
+    bool right = false, left = false, up = false, Z = false, down = false; bool  no_chao = true, space=false;
+    int chao = 746, educacional = 0, aparece = 0;
     float gravidade = 0.0;
     ALLEGRO_DISPLAY* janela = al_create_display(1600, 900);
     ALLEGRO_BITMAP* fundo_Inicial = al_load_bitmap("Fase 3.png");
     ALLEGRO_BITMAP* life = al_load_bitmap("life.png");
     ALLEGRO_BITMAP* personagem = al_load_bitmap("personagem.png");
     ALLEGRO_BITMAP* vilao = al_load_bitmap("vilao3.png");
+    ALLEGRO_BITMAP* imagem = al_load_bitmap("Páginaeducacional.png");
+    ALLEGRO_FONT* fonte = al_load_ttf_font("arial.ttf", 40, 0);
     ALLEGRO_BITMAP* socoleft = al_load_bitmap("socoleft.png");
     ALLEGRO_BITMAP* socoright = al_load_bitmap("socoright.png");
-    ALLEGRO_BITMAP* HABILIDADE = al_load_bitmap("Seringa.png");
+    ALLEGRO_BITMAP* rightHABILIDADE = al_load_bitmap("rightSeringa.png");
+    ALLEGRO_BITMAP* leftHABILIDADE = al_load_bitmap("leftSeringa.png");
     ALLEGRO_BITMAP* movimentoleft = al_load_bitmap("personagemleft.png");
     ALLEGRO_BITMAP* movimentoright = al_load_bitmap("personagemright.png");
     ALLEGRO_EVENT_QUEUE* fila = al_create_event_queue();
@@ -835,11 +849,18 @@ int Tela3(int tela) {
             case ALLEGRO_KEY_D: right = true; break;
             case ALLEGRO_KEY_UP:up = true; break;
             case ALLEGRO_KEY_W:up = true; break;
-            case ALLEGRO_KEY_Z:;  Z = true; break;
+            case ALLEGRO_KEY_Z: Z = true; break;
             case ALLEGRO_KEY_DOWN: down = true; break;
             case ALLEGRO_KEY_ESCAPE: tela = 1; break;
+            case ALLEGRO_KEY_SPACE: space = true; break;
             case ALLEGRO_KEY_ENTER: printf(" x = %d y = %d", p.x, p.y);
             }
+        }
+        if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_DOWN) {
+            if (evento.mouse.x >= 644 && evento.mouse.x <= 948 && evento.mouse.y >= 740 && evento.mouse.y <= 822) {
+                educacional++;
+            }
+            printf("Clique detectado em (%d, %d)\n", evento.mouse.x, evento.mouse.y);
         }
         else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
             switch (evento.keyboard.keycode) {
@@ -851,56 +872,136 @@ int Tela3(int tela) {
             case ALLEGRO_KEY_DOWN:down = false; break;
             case ALLEGRO_KEY_A: left = false; break;
             case ALLEGRO_KEY_D: right = false; break;
+            case ALLEGRO_KEY_SPACE: space = false; break;
             }
         }
-        if (left) {
-            p.x -= p.v[0];
+        if (educacional < 2) {
+            al_draw_scaled_bitmap(imagem, 0, 0, 1920, 1080, 0, 0, 1600, 900, 0);
+        } if (educacional == 0) {
+            al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Contexto");
+            al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
+                "Após enfrentar infecções em diversos órgãos e impedir a destruição do cérebro, agora que os outros vírus e bacterias não estão mais atrapalhando descobrimos que na verdade: o vírus principal nunca teve como alvo apenas um órgão. Ele estava manipulando todo o sistema circulatório para alcançar o coração, o centro que mantém o corpo vivo. Agora, o coração está entrando em falência. As câmaras cardíacas estão pulsando de forma irregular, o fluxo sanguíneo foi comprometido.\n\nVocê o agente neutralizador é a última esperança.");
         }
-        if (right) {
-            p.x += p.v[0];
+        if (educacional == 1) {
+            al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Curiosidade");
+            al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
+                "Enquanto você combate as bactérias, o coração continua trabalhando sem pausa: ele bate mais de 100 mil vezes por dia, até quando você dorme!  Ao longo da vida, isso passa de 3 bilhões de batidas.\n\nAqui dentro, cada batida é energia pura pra sua missão!");
         }
-        if (up && no_chao) {
-            gravidade = -12.0;
-            no_chao = false;
-        }
-        gravidade += 0.5;
-        p.y += gravidade;
+        if (educacional == 2) {
+            if (p.vida > 0) {
+                if (p.x > 4 && p.x < 1579) {
+                    if (left) {
+                        p.x -= p.v[0];
+                    }
+                }
 
-        if (p.y >= chao) {
-            p.y = chao;
-            gravidade = 0.0;
-            no_chao = true;
-        }
-       
-        al_clear_to_color(al_map_rgb(0, 0, 0));
-        al_draw_scaled_bitmap(fundo_Inicial, 0, 0, 1920, 1080, 0, 0, 1600, 900, 0);
-        for (int i = 0; i < p.vida; i++) {
-            al_draw_bitmap(life, 20 + i * 60, 60, 0);
-        }
-        if (left) {
-            if (Z) {
-                al_draw_bitmap(socoleft, p.x, p.y, 0);
-            }
-            else {
-                al_draw_bitmap(movimentoleft, p.x, p.y, 0);
-            }
-        }
-        else {
-            if (right) {
-                if (Z) {
-                    al_draw_bitmap(socoright, p.x, p.y, 0);
+                if (p.x > 0 && p.x < 1575) {
+                    if (right) {
+                        p.x += p.v[0];
+                    }
+                }
+                if (up && no_chao) {
+                    gravidade = -12.0;
+                    no_chao = false;
+                }
+                gravidade += 0.5;
+                p.y += gravidade;
+
+                if (p.y >= chao) {
+                    p.y = chao;
+                    gravidade = 0.0;
+                    no_chao = true;
+                }
+                if (right || left) {
+                    if (space) {
+                        t.x[0] = p.x;
+                        t.y[0] = p.y;
+                    }
+                }
+                if (right) {
+                    if (space) {
+                        aparece = 1;
+                    }
+                }
+
+                if (left) {
+                    if (space) {
+                        aparece = 2;
+                    }
+                }
+                if (aparece == 0) {
+                    t.x[0] = 0;
+                    t.y[0] = 0;
                 }
                 else {
-                    al_draw_bitmap(movimentoright, p.x, p.y, 0);
+
+                    if (aparece == 1) {
+
+                        if (t.x[0] <= p.x + 600) {
+                            t.x[0] += 8;
+                        }
+                        else {
+                            t.x[0] = p.x;
+                            t.y[0] = p.y;
+                            aparece = 0;
+                        }
+
+
+
+                    }
+                    if (aparece == 2) {
+
+                        if (t.x[0] >= p.x - 600) {
+                            t.x[0] -= 8;
+                        }
+                        else {
+                            t.x[0] = p.x;
+                            t.y[0] = p.y;
+                            aparece = 0;
+                        }
+
+                    }
+
+                }
+                al_clear_to_color(al_map_rgb(0, 0, 0));
+                al_draw_scaled_bitmap(fundo_Inicial, 0, 0, 1920, 1080, 0, 0, 1600, 900, 0);
+                for (int i = 0; i < p.vida; i++) {
+                    al_draw_bitmap(life, 20 + i * 60, 60, 0);
+                }
+                if (left) {
+                    if (Z) {
+                        al_draw_scaled_bitmap(socoleft, 0, 0, 27, 30, p.x, p.y, 60, 60, 0);
+                    }
+                    else {
+                        al_draw_scaled_bitmap(movimentoleft, 0, 0, 30, 27, p.x, p.y, 60, 60, 0);
+                    }
+                }
+                else {
+                    if (right) {
+                        if (Z) {
+                            al_draw_scaled_bitmap(socoright, 0, 0, 24, 34, p.x, p.y, 60, 60, 0);
+                            
+                        }
+                        else {
+                            al_draw_scaled_bitmap(movimentoright, 0, 0, 30, 30, p.x, p.y, 60, 60, 0);
+                            
+                        }
+                    }
+                    else {
+                        al_draw_scaled_bitmap(personagem,0,0,32,32,p.x, p.y,60,60, 0);
+                    }
+                    
+                }
+                if (aparece == 1) {
+                    al_draw_scaled_bitmap(rightHABILIDADE, 0, 0, 612, 408, t.x[0], t.y[0] - 5, 80, 80, 0);
+                }
+                if (aparece == 2) {
+                    al_draw_scaled_bitmap(leftHABILIDADE, 0, 0, 612, 408, t.x[0], t.y[0] - 5, 80, 80, 0);
                 }
             }
-            else {
-                al_draw_bitmap(personagem, p.x, p.y, 0);
-            }
-            if (Z) {
-                al_draw_bitmap(socoright, p.x, p.y, 0);
-            }
+
         }
+       
         al_flip_display();
     }
     al_destroy_bitmap(fundo_Inicial);
@@ -942,6 +1043,7 @@ int Tela4(int tela) {
     float gravidade = 0.0;
     ALLEGRO_DISPLAY* janela = al_create_display(1600, 900);
     ALLEGRO_BITMAP* imagem = al_load_bitmap("Páginaeducacional.png");
+    ALLEGRO_FONT* fonte = al_load_ttf_font("arial.ttf", 40, 0);
     ALLEGRO_BITMAP* fundo_Inicial = al_load_bitmap("Fase4.png");
     ALLEGRO_BITMAP* life = al_load_bitmap("life.png");
     ALLEGRO_BITMAP* personagem = al_load_bitmap("personagem.png");
@@ -949,7 +1051,6 @@ int Tela4(int tela) {
     ALLEGRO_BITMAP* movimentoright = al_load_bitmap("personagemright.png");
     ALLEGRO_BITMAP* socoleft = al_load_bitmap("socoleft.png");
     ALLEGRO_BITMAP* socoright = al_load_bitmap("socoright.png");
-    ALLEGRO_FONT* fonte = al_load_ttf_font("arial.ttf", 40, 0);
     ALLEGRO_BITMAP* rightHABILIDADE = al_load_bitmap("rightSeringa.png");
     ALLEGRO_BITMAP* leftHABILIDADE = al_load_bitmap("leftSeringa.png");
     ALLEGRO_BITMAP* imageVilao = al_load_bitmap("vilao3.png");
@@ -990,7 +1091,7 @@ int Tela4(int tela) {
             if (evento.mouse.x >= 644 && evento.mouse.x <= 948 && evento.mouse.y >= 740 && evento.mouse.y <= 822) {
                 educacional++;
             }
-            printf("Clique detectado em (%d, %d)\n", evento.mouse.x, evento.mouse.y);
+           
         }
         else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
             switch (evento.keyboard.keycode) {
@@ -1010,10 +1111,10 @@ int Tela4(int tela) {
         } if (educacional == 0) {
             al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Curiosidade");
             al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
-                "Para concluir a fase e curar o cérebro, você precisará localizar e derrotar o vírus que está causando o desequilíbrio. Explore com atenção: há uma passagem oculta que leva diretamente até ele.\nLembre - se: nesta fase, o uso da habilidade está desativado.Reste apenas sua percepção e coragem para avançar.");
+                "Os rins podem filtrar cerca de 180 litros de sangue por DIA e ajuda a remover substância tóxicas, restos de bactérias e outros resíduos que podem ser prejudiciais a saúde.");
         }
         if (educacional == 1) {
-            al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Dica");
+            al_draw_text(fonte, al_map_rgb(0, 0, 0), 700, 100, 0, "Contexto e dica");
             al_draw_multiline_text(fonte, al_map_rgb(0, 0, 0), 125, 140, 1350, al_get_font_line_height(fonte), ALLEGRO_ALIGN_LEFT,
                 "O rim está à beira do colapso. Invasores microscópicos tomaram os túbulos e filtros, impedindo o órgão de cumprir sua função vital. O fluxo de impurezas aumenta a cada segundo, e o corpo inteiro depende da sua intervenção.\nPara concluir a fase, você precisa eliminar todos os inimigos que estão causando danos ao rim.Eles se escondem entre as estruturas internas, protegidos por caminhos estreitos e áreas contaminadas.Avance com estratégia e atenção : cada inimigo derrotado libera um pouco mais da capacidade de filtragem, aproximando o rim da cura total.\nAlerta:cuidado é possivel derrotar o inimigo com os socos mas voce precisará tomar muito cuidado para ele tambem não te ferir");
         }
